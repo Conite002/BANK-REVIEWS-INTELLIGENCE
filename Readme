@@ -1,0 +1,84 @@
+## BRI 
+BankReviewIntelligence :  Insightful analytics and decision-making support based on customer reviews of banks.
+
+
+## Architecture
+<img src="./architecture.jpg" alt="project architecture draft" style="width: 100%"/>
+
+
+# ------------------------------------------------------------
+Plan Outline
+# ------------------------------------------------------------
+
+### 01 Data Collection:
+
+* Load Cities: Load city data from a JSON file.
+* Scrape Reviews: Use Selenium to scrape reviews from Google Maps.
+* Save Data: Save the scraped data into Parquet files.
+
+## 02. Data Concatenation:
+
+* Build Macro Table: Concatenate Parquet files into a single dataframe.
+
+## 03.Data Preprocessing:
+
+* Preprocess Data: Clean and preprocess the data.
+* Generate Topics and Sentiments: Integrate topic and sentiment data.
+
+## 04. Database Initialization:
+
+* Database Creation: Create the PostgreSQL database and user.
+* Schema Definition: Transactional database
+* Data Insertion: Insert data into the database.
+* Data Retrieval: Retrieve data from the database.
+* Schema Definition: Decisional database
+* Data Migration: Transactional to Decisional
+* Visualization
+
+
+# -----------------------------------------------------------
+# Directory Structure 
+# ------------------------------------------------------------
+
+BRI/
+│
+├── data/
+│   ├── raw/                 # Données brutes collectées
+│   ├── processed/           # Données après prétraitement
+│   ├── temp/                # Fichiers temporaires
+│   └── parquet/             # Fichiers Parquet
+│
+├── src/
+│   ├── __init__.py
+│   ├── config.py            # Configuration et paramètres
+│   ├── data_collection/
+│   │   ├── __init__.py
+│   │   ├── scraper.py       # Logique de collecte de données
+│   │   └── utils.py         # Fonctions utilitaires pour la collecte
+│   │
+│   ├── data_concatenation/
+│   │   ├── __init__.py
+│   │   └── concatenate.py   # Logique de concaténation des données
+│   │
+│   ├── data_preprocessing/
+│   │   ├── __init__.py
+│   │   ├── preprocessing.py # Prétraitement des données
+│   │   └── utils.py         # Fonctions utilitaires pour le prétraitement
+│   │
+│   ├── database_management/
+│   │   ├── __init__.py
+│   │   ├── db_models.py     # Définition des modèles de la base de données
+│   │   └── database_initializer.py # Création et gestion de la base de données
+│   │
+│   ├── visualization/
+│   │   ├── __init__.py
+│   │   └── visualization.py # Logique de visualisation (optionnel)
+│   │
+│   └── main.py              # Point d'entrée principal
+│
+├── Dockerfile
+├── docker-compose.yml       # Fichier de configuration Docker Compose
+├── requirements.txt         # Dépendances Python
+├── .dockerignore            # Fichiers et répertoires à ignorer par Docker
+├── .gitignore               # Fichiers et répertoires à ignorer par Git
+└── README.md                # Documentation du projet

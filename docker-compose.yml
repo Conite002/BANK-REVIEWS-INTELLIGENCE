@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres
+    container_name: postgres_db
+    restart: always
+    environment:
+      - POSTGRES_DB=bank_reviews
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_ROOT_PASSWORD=root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  app:
+    build: .
+    environment:
+      - DB_USER=postgres  
+      - DB_PASSWORD=postgres
+      - DB_NAME=bank_reviews
+      - DB_PORT=5432
+      - DB_HOST=postgres_db 
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    ports:
+      - "8000:80"  # Assuming your app runs on port 80 internally, map it to port 8000 externally
+      
+    entrypoint: ["bash", "/app/entrypoint.sh"]
+
+volumes:
+  postgres_data:

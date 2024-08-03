@@ -1,0 +1,10 @@
+selenium
+beautifulsoup4
+pandas
+numpy
+scikit-learn
+nltk
+psycopg2-binary
+sqlalchemy
+loguru
+pyarrow
