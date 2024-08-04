@@ -39,5 +39,17 @@ services:
       
     entrypoint: ["bash", "/app/entrypoint.sh"]
 
+  ollama:
+    volumes:
+      -ollama:/root/.ollama
+    image: ollama/ollama:latest
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  ollama:
