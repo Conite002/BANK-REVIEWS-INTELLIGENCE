@@ -84,9 +84,9 @@ def preprocess_dataframe(df):
     df['Reviewer_Publish_Date'] = pd.to_datetime(df['Reviewer_Publish_Date'], errors='coerce').fillna(default_date)
     df['Reviewer_Owner_Reply_Date'] = pd.to_datetime(df['Reviewer_Owner_Reply_Date'], errors='coerce').fillna(default_date)
 
-    # print(df.head())
-    print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
-    print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
+    # # print(df.head())
+    # print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
+    # print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
 
     # --------------------------------------------------------
     # 0.7 Replace NaN values with appropriate defaults

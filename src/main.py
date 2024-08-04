@@ -5,6 +5,7 @@ sys.path.append(project_root)
 import psycopg2
 import subprocess
 
+
 import time
 from datetime import datetime
 from selenium.webdriver.chrome.options import Options
@@ -24,10 +25,11 @@ from src.data_concatenation.concatenate import build_macro_table
 from src.data_preprocessing.preprocessing import preprocess_dataframe
 import pandas as pd
 import sys
-from src.database_management.database_initializer import DatabaseInitializer, insert_data_from_dataframe, wait_for_postgresql
+from src.database_management.database_initializer import DatabaseInitializer, wait_for_postgresql
+from src.database_management.dataframe_to_transactionalDB import insert_data_from_dataframe
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Text, Date, ForeignKey, insert
+from sqlalchemy import create_engine, Column, Integer, String, Text, Date, ForeignKey, insert
 
 # ----------------------------------------------------------
 
@@ -268,8 +270,7 @@ def main():
             cur.execute(query)
             existing_tables = cur.fetchall()
             existing_tables = [table[0] for table in existing_tables]
-            print(f"Existing tables  : {existing_tables}")
-
+            print("\033[1;92mTABLES CREATED SUCCESSFULLY.\033[0m \033[1;94m" + str(existing_tables) + "\033[0m")
 
     # --------------------------------------------------------
     # 0.6 Insertion of data in database
