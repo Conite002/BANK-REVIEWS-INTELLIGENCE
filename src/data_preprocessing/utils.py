@@ -29,6 +29,21 @@ def remove_some_cols(cols, df):
 
 def generate_static_topics_and_sentiments(stars):
     if stars == 1:
+        return ('Expérience' ,"Très mauvaise", [])
+    elif stars == 2:
+        return ("Expérience", "Mauvaise", [])
+    elif stars == 3:
+        return ("Expérience", "Neutre", [])
+    elif stars == 4:
+        return ("Expérience", "Bonne", [])
+    elif stars == 5:
+        return ("Expérience", "Très bonne")
+    else:
+        return ("Expérience", "Neutre", [])
+
+
+def generate_static_reviews_form_stars(stars):
+    if stars == 1:
         return "Très mauvaise expérience"
     elif stars == 2:
         return "Mauvaise expérience",
@@ -40,4 +55,5 @@ def generate_static_topics_and_sentiments(stars):
         return "Très bonne expérience"
     else:
         return "Expérience neutre"
+
 

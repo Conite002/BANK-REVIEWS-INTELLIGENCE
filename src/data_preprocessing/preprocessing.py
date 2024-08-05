@@ -2,12 +2,14 @@ import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 from src.data_preprocessing.utils import remove_some_cols
 
-from data_preprocessing.utils import parse_relative_date, generate_static_topics_and_sentiments
+from data_preprocessing.utils import parse_relative_date, generate_static_topics_and_sentiments, generate_static_reviews_form_stars
 # from utils import parse_relative_date, generate_static_topics_and_sentiments
 import pandas as pd
 import numpy as np
 from topificator import TopicExtractor
 import pandas as pd
+from datetime import datetime, timedelta
+from tqdm import tqdm
 
 
 def preprocess_dataframe(df):
@@ -50,7 +52,7 @@ def preprocess_dataframe(df):
     # --------------------------------------------------------
     def handle_nan_reviewer_text(row):
         if row['Reviewer_Text'] == 'NAN':
-            topic = generate_static_topics_and_sentiments(row['Reviewer_Star'])
+            topic = generate_static_reviews_form_stars(row['Reviewer_Star'])
             row['Reviewer_Text'] = topic
         return row
     
@@ -105,8 +107,49 @@ def preprocess_dataframe(df):
     # print(df.isna().sum())
     # print(df.dtypes)
 
+    # --------------------------------------------------------
+    # Extract topics and sentiments
+    # --------------------------------------------------------
     extractor = TopicExtractor(model="llama3.1", patience=5)
     t = "L'application pour acceder a mon compte bug. On n'arrive pas pas a se connecter facilement."
     topics = extractor.extract(t, type='SINGLE_SOURCE')
     print(f"Topics : {topics}")
-    return df
+
+    output_file = '/app/data/macro_llamma.csv'
+    save_interval = 1
+    row_accumulated = 0
+    for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+        review = row['Reviewer_Text']
+        
+        try:
+            topics = extractor.extract(review, type='SINGLE_SOURCE')
+            print(f"Topic {index} : ", topics)
+            topics_array = topics['topics']
+        
+            if len(topics_array) == 0:
+                static_topic, static_sentiment, static_sub_topic = generate_static_topics_and_sentiments(row['Reviewer_Sart'])
+                new_row = row.copy()
+                new_row['Topic'] = static_topic
+                new_row['Sentiment'] = static_sentiment
+                new_row['Sub_Topic'] = static_sub_topic
+                df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
+                row_accumulated += 1
+            else:
+                for tuple_ in topics_array:
+                    new_row = row.copy()
+                    new_row['Topic'] = tuple_[0]
+                    new_row['Sentiment'] = tuple_[1]
+                    new_row['Sub_Topic'] = tuple_[2]
+                    df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
+                    row_accumulated += 1
+                
+            # Sauvegarder à chaque intervalle défini
+            if row_accumulated >= save_interval:
+                df_macro.to_csv(output_file, index=False)
+                row_accumulated = 0
+        except Exception as e:
+            print(f"Erreur rencontrée à l'index {index}: {e}")
+            pass
+
+
+    return df_macro
