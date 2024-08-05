@@ -1,0 +1,8 @@
+FROM ollama/ollama:latest
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+RUN ollama serve & \
+    curl --retry 10 --retry-connrefused --retry-delay 1 http://localhost:11434/ && \
+    curl -X POST -d '{"name": "llama3.1"}' http://localhost:11434/api/pull

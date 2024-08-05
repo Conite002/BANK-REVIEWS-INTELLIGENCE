@@ -6,6 +6,9 @@ from data_preprocessing.utils import parse_relative_date, generate_static_topics
 # from utils import parse_relative_date, generate_static_topics_and_sentiments
 import pandas as pd
 import numpy as np
+from topificator import TopicExtractor
+import pandas as pd
+
 
 def preprocess_dataframe(df):
     # --------------------------------------------------------
@@ -102,4 +105,8 @@ def preprocess_dataframe(df):
     # print(df.isna().sum())
     # print(df.dtypes)
 
+    extractor = TopicExtractor(model="llama3.1", patience=5)
+    t = "L'application pour acceder a mon compte bug. On n'arrive pas pas a se connecter facilement."
+    topics = extractor.extract(t, type='SINGLE_SOURCE')
+    print(f"Topics : {topics}")
     return df

@@ -17,7 +17,20 @@ until pg_isready -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER}; do
   sleep 2
 done
 
-log "PostgreSQL is up - connection successful"
+echo -e "\033[92mPostgreSQL is up - connection successful\033[0m"
+
+# Pulling ollama
+# ollama pull llama3.1
+# Wait for Ollama
+until curl -s http://ollama:11434/; do
+  echo "Waiting for Ollama..."
+  sleep 2
+done
+
+echo -e "\033[32m Ollama is up - connection successful!\033[0m"
+
+
+
 
 # Lancer l'application principale (ou tout autre processus)
 exec python3 /app/src/main.py

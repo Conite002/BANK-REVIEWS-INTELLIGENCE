@@ -150,7 +150,7 @@ def main():
     else:
         print("Reviewer_Text not found in the dataframes")
 
-    
+
     # --------------------------------------------------------
     # 0.5 Initialization of database
     # --------------------------------------------------------
