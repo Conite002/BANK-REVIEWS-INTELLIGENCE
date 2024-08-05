@@ -142,13 +142,13 @@ def main():
     # --------------------------------------------------------
     # 0.4 Topification
     # --------------------------------------------------------
-    TEMP_REVIEWS_PATH = os.path.join(project_root, 'data', 'processed', 'topics', 'bank_reviews.csv')
-    df_topics = pd.read_csv(TEMP_REVIEWS_PATH)
-    # completer le dataframe df existant  avec les autres colonnes du df_topics tout en comparant la colonne Reviewer_Text 
-    if 'Reviewer_Text' in df.columns and 'Reviewer_Text' in df_topics:
-        df = df.merge(df_topics, on='Reviewer_Text', how='right')
-    else:
-        print("Reviewer_Text not found in the dataframes")
+    # TEMP_REVIEWS_PATH = os.path.join(project_root, 'data', 'processed', 'topics', 'bank_reviews.csv')
+    # df_topics = pd.read_csv(TEMP_REVIEWS_PATH)
+    # # completer le dataframe df existant  avec les autres colonnes du df_topics tout en comparant la colonne Reviewer_Text 
+    # if 'Reviewer_Text' in df.columns and 'Reviewer_Text' in df_topics:
+    #     df = df.merge(df_topics, on='Reviewer_Text', how='right')
+    # else:
+    #     print("Reviewer_Text not found in the dataframes")
 
 
     # --------------------------------------------------------

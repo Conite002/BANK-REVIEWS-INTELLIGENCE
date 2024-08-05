@@ -67,7 +67,7 @@ def preprocess_dataframe(df):
     }).infer_objects(copy=False)
 
     # Using map instead of applymap
-    df = df.map(lambda x: None if pd.isna(x) else x)
+    df = df.applymap(lambda x: None if pd.isna(x) else x)
 
 
     # --------------------------------------------------------
