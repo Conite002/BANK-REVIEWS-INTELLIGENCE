@@ -48,29 +48,29 @@ def main():
     chrome_options.add_argument("--headless")
     countries_cities = load_cities(CITIES_PATH)
 
-    # for country, cities in countries_cities.items():
-    #     print("PULLING: ", country)
-    #     for city in tqdm(cities):
-    #         browser = webdriver.Chrome(options=chrome_options)
-    #         search_query = f"Banque {city}, {country}"
-    #         browser.get(f"https://www.google.com/maps/search/{search_query}")
-    #         time.sleep(20)
+    for country, cities in countries_cities.items():
+        print("PULLING: ", country)
+        for city in tqdm(cities):
+            browser = webdriver.Chrome(options=chrome_options)
+            search_query = f"Banque {city}, {country}"
+            browser.get(f"https://www.google.com/maps/search/{search_query}")
+            time.sleep(20)
 
-    #         retry_attempts = 3
-    #         while retry_attempts > 0:
-    #             try:
-    #                 sites, action = primary_search(browser)
-    #                 extract(browser, sites, action, country, city, chrome_options, verbose=True)
-    #                 break  # Break if no exception
-    #             except StaleElementReferenceException:
-    #                 retry_attempts -= 1
-    #                 print(f"Retrying... ({3 - retry_attempts}/3)")
-    #                 time.sleep(2)  # Brief wait before retrying
-    #             except Exception as e:
-    #                 throw_error(e, location='main loop')
-    #                 break  # Break on other exceptions
+            retry_attempts = 3
+            while retry_attempts > 0:
+                try:
+                    sites, action = primary_search(browser)
+                    extract(browser, sites, action, country, city, chrome_options, verbose=True)
+                    break  # Break if no exception
+                except StaleElementReferenceException:
+                    retry_attempts -= 1
+                    print(f"Retrying... ({3 - retry_attempts}/3)")
+                    time.sleep(2)  # Brief wait before retrying
+                except Exception as e:
+                    throw_error(e, location='main loop')
+                    break  # Break on other exceptions
 
-    #         browser.quit()
+            browser.quit()
     # --------------------------------------------------------
     # 0.1 Build macro table
     # --------------------------------------------------------
