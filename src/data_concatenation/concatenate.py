@@ -35,7 +35,7 @@ def build_macro_table(root_dir):
                                     macro_df = pd.concat([macro_df, df], ignore_index=True)
 
     # Create the macro_tables directory if it doesn't exist
-    macro_tables_dir = os.path.join(os.getcwd(), "macro_table")
+    macro_tables_dir = os.path.join(os.path.dirname(os.getcwd()), "data", 'temp','macro_table')
     os.makedirs(macro_tables_dir, exist_ok=True)
 
 

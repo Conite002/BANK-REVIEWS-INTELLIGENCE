@@ -118,13 +118,15 @@ def preprocess_dataframe(df):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     # Define the output directory relative to the project's root
     project_root = os.path.dirname(os.path.dirname(script_dir))
-    output_directory = os.path.join(project_root, 'data')
-    print("Path to data folder:", output_directory)
+    output_directory = os.path.join(project_root, 'data', 'processed')
+    # Create the date folder
+    output_directory = os.path.join(output_directory, datetime.now().strftime('%Y-%m-%d'))
 
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     output_file = os.path.join(output_directory, 'macro_llamma.csv')
 
+    print(f"DIRECTORY : {output_directory}")
     save_interval = 1
     row_accumulated = 0
     df_macro = df
