@@ -38,3 +38,15 @@ def is_website_url(text):
     )
     return bool(url_pattern.match(text))
 
+
+def load_from_config(config_path='config.json', name='state'):
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    return config[name]
+
+def save_to_config(name, value, config_path='config.json'):
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    config[name] = value
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=4)

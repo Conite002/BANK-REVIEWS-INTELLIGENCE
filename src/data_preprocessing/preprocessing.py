@@ -51,7 +51,7 @@ def preprocess_dataframe(df):
     # 0.3 Handle NaN values of reviews text with  reviewer_start
     # --------------------------------------------------------
     def handle_nan_reviewer_text(row):
-        if row['Reviewer_Text'] == 'NAN':
+        if pd.isna(row['Reviewer_Text']) or row['Reviewer_Text'] == 'NAN' or row['Reviewer_Text'].strip()=='':
             topic = generate_static_reviews_form_stars(row['Reviewer_Star'])
             row['Reviewer_Text'] = topic
         return row
@@ -67,7 +67,7 @@ def preprocess_dataframe(df):
     }).infer_objects(copy=False)
 
     # Using map instead of applymap
-    df = df.applymap(lambda x: None if pd.isna(x) else x)
+    # df = df.applymap(lambda x: None if pd.isna(x) else x)
 
 
     # --------------------------------------------------------
@@ -82,6 +82,10 @@ def preprocess_dataframe(df):
     default_date = pd.Timestamp('1970-01-01')
     df['Reviewer_Publish_Date'] = df['Reviewer_Publish_Date'].fillna(default_date)
     df['Reviewer_Owner_Reply_Date'] = df['Reviewer_Owner_Reply_Date'].fillna(default_date)
+    def changeNAN_Nothings(row):
+        if row == 'NAN':
+            return 'Nothing'
+    df['Reviewer_Owner_Reply'] = df['Reviewer_Owner_Reply'].apply(changeNAN_Nothings)
 
     # --------------------------------------------------------
     # 0.6 Ensure conversion to datetime
@@ -89,67 +93,73 @@ def preprocess_dataframe(df):
     df['Reviewer_Publish_Date'] = pd.to_datetime(df['Reviewer_Publish_Date'], errors='coerce').fillna(default_date)
     df['Reviewer_Owner_Reply_Date'] = pd.to_datetime(df['Reviewer_Owner_Reply_Date'], errors='coerce').fillna(default_date)
 
-    # # print(df.head())
-    # print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
-    # print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
+    # # # print(df.head())
+    # # print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
+    # # print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
 
     # --------------------------------------------------------
     # 0.7 Replace NaN values with appropriate defaults
     # --------------------------------------------------------
-    df['Reviewer_Star'] = df['Reviewer_Star'].fillna(0)
-    df['Reviewer_Like_Reaction'] = df['Reviewer_Like_Reaction'].fillna(0)
-    df['Reviewer_Name'] = df['Reviewer_Name'].fillna('Anonymous')
-    df['Reviewer_Text'] = df['Reviewer_Text'].fillna('')
-    df['Reviewer_Profile_Link'] = df['Reviewer_Profile_Link'].fillna('')
-    df['Reviewer_Owner_Reply'] = df['Reviewer_Owner_Reply'].fillna('')
+    # df['Reviewer_Profile_Link'] = df['Reviewer_Profile_Link'].fillna('')
+    # df['Reviewer_Owner_Reply'] = df['Reviewer_Owner_Reply'].fillna('')
 
-    # After filling NaNs, make sure there are no NaNs left
-    # print(df.isna().sum())
-    # print(df.dtypes)
+    # # After filling NaNs, make sure there are no NaNs left
+    # # print(df.isna().sum())
+    # # print(df.dtypes)
 
-    # --------------------------------------------------------
-    # Extract topics and sentiments
-    # --------------------------------------------------------
-    extractor = TopicExtractor(model="llama3.1", patience=5)
-    t = "L'application pour acceder a mon compte bug. On n'arrive pas pas a se connecter facilement."
-    topics = extractor.extract(t, type='SINGLE_SOURCE')
-    print(f"Topics : {topics}")
+    # # --------------------------------------------------------
+    # # Extract topics and sentiments
+    # # --------------------------------------------------------
+    # extractor = TopicExtractor(model="llama3.1", patience=5)
+    # t = "L'application pour acceder a mon compte bug. On n'arrive pas pas a se connecter facilement."
+    # topics = extractor.extract(reviews=t, stars=5, type='SINGLE_SOURCE')
+    # print(f"Topic : {topics}")
 
-    output_file = '/app/data/macro_llamma.csv'
-    save_interval = 1
-    row_accumulated = 0
-    for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-        review = row['Reviewer_Text']
+    # script_dir = os.path.dirname(os.path.abspath(__file__))
+    # # Define the output directory relative to the project's root
+    # project_root = os.path.dirname(script_dir)  # Adjust this if your structure is different
+    # output_directory = os.path.join(project_root, 'data')
+    
+    # if not os.path.exists(output_directory):
+    #     os.makedirs(output_directory)
+    # output_file = os.path.join(output_directory, 'macro_llamma.csv')
+
+    # save_interval = 1
+    # row_accumulated = 0
+    # df_macro = df
+    # for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+    #     review = row['Reviewer_Text']
+    #     stars = row['Reviewer_Star']
+    #     try:
+    #         topics = extractor.extract(reviews=review, stars=stars,  type='SINGLE_SOURCE')
+    #         print(f"Topic {index} : {review} ::: {topics}")
+    #         topics_array = topics['topics']
         
-        try:
-            topics = extractor.extract(review, type='SINGLE_SOURCE')
-            print(f"Topic {index} : ", topics)
-            topics_array = topics['topics']
-        
-            if len(topics_array) == 0:
-                static_topic, static_sentiment, static_sub_topic = generate_static_topics_and_sentiments(row['Reviewer_Sart'])
-                new_row = row.copy()
-                new_row['Topic'] = static_topic
-                new_row['Sentiment'] = static_sentiment
-                new_row['Sub_Topic'] = static_sub_topic
-                df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
-                row_accumulated += 1
-            else:
-                for tuple_ in topics_array:
-                    new_row = row.copy()
-                    new_row['Topic'] = tuple_[0]
-                    new_row['Sentiment'] = tuple_[1]
-                    new_row['Sub_Topic'] = tuple_[2]
-                    df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
-                    row_accumulated += 1
+    #         if len(topics_array) == 0:
+    #             static_topic, static_sentiment, static_sub_topic = generate_static_topics_and_sentiments(row['Reviewer_Sart'])
+    #             new_row = row.copy()
+    #             new_row['Topic'] = static_topic
+    #             new_row['Sentiment'] = static_sentiment
+    #             new_row['Sub_Topic'] = static_sub_topic
+    #             df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
+    #             row_accumulated += 1
+    #         else:
+    #             for tuple_ in topics_array:
+    #                 new_row = row.copy()
+    #                 new_row['Topic'] = tuple_[0]
+    #                 new_row['Sentiment'] = tuple_[1]
+    #                 new_row['Sub_Topic'] = tuple_[2]
+    #                 df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
+    #                 row_accumulated += 1
                 
-            # Sauvegarder à chaque intervalle défini
-            if row_accumulated >= save_interval:
-                df_macro.to_csv(output_file, index=False)
-                row_accumulated = 0
-        except Exception as e:
-            print(f"Erreur rencontrée à l'index {index}: {e}")
-            pass
+    #         # Sauvegarder à chaque intervalle défini
+    #         if row_accumulated >= save_interval:
+    #             df_macro.to_csv(output_file, index=False)
+    #             row_accumulated = 0
+    #     except Exception as e:
+    #         print(f"Erreur rencontrée à l'index {index}: {e}")
+    #         pass
 
 
-    return df_macro
+    return df
+    # return df_macro

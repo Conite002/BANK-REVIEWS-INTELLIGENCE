@@ -85,25 +85,25 @@ def main():
     # --------------------------------------------------------
     # 0.4 Remove some columns
     # --------------------------------------------------------
-    df = df.fillna({
-        'Country': 'Unknown',
-        'Town': 'Unknown',
-        'Bank_Name': 'Unknown',
-        'Bank_Phone_number': '',
-        'Bank_Address': '',
-        'Bank_Website': '',
-        'Reviewer_Name': 'Anonymous',
-        'Reviewer_Star': 0,
-        'Reviewer_Text': '',
-        'Reviewer_Publish_Date': pd.Timestamp('1970-01-01'),
-        'Reviewer_Like_Reaction': 0,
-        'Reviewer_Profile_Link': '',
-        'Reviewer_Owner_Reply': '',
-        'Reviewer_Owner_Reply_Date': pd.Timestamp('1970-01-01'),
-        'Topics': 'General',
-        'Sentiments': 'Neutral',
-        'Sub_Topics': 'Miscellaneous'
-    })
+    # df = df.fillna({
+    #     'Country': 'Unknown',
+    #     'Town': 'Unknown',
+    #     'Bank_Name': 'Unknown',
+    #     'Bank_Phone_number': '',
+    #     'Bank_Address': '',
+    #     'Bank_Website': '',
+    #     'Reviewer_Name': 'Anonymous',
+    #     'Reviewer_Star': 0,
+    #     'Reviewer_Text': '',
+    #     'Reviewer_Publish_Date': pd.Timestamp('1970-01-01'),
+    #     'Reviewer_Like_Reaction': 0,
+    #     'Reviewer_Profile_Link': '',
+    #     'Reviewer_Owner_Reply': '',
+    #     'Reviewer_Owner_Reply_Date': pd.Timestamp('1970-01-01'),
+    #     'Topics': 'General',
+    #     'Sentiments': 'Neutral',
+    #     'Sub_Topics': 'Miscellaneous'
+    # })
     
 
     # --------------------------------------------------------
