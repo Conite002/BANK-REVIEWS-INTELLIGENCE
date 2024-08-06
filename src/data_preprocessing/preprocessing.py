@@ -162,6 +162,7 @@ def preprocess_dataframe(df):
         except Exception as e:
             print(f"Erreur rencontrée à l'index {index}: {e}")
             pass
+    df_macro.reset_index(drop=True, inplace=True)
 
 
     # return df

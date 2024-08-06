@@ -27,6 +27,7 @@ import pandas as pd
 import sys
 from src.database_management.database_initializer import DatabaseInitializer, wait_for_postgresql
 from src.database_management.dataframe_to_transactionalDB import insert_data_from_dataframe
+from src.database_management.migrate_to_decisionalDB import migration_to_decisionalDB
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 from sqlalchemy import create_engine, Column, Integer, String, Text, Date, ForeignKey, insert
@@ -173,10 +174,7 @@ def main():
     # ------------------------------------------------------------------------------
     # Configuration de la base de donnees
     # ------------------------------------------------------------------------------
-    USERNAME = 'conite'
-    PASSWORD = 'conite_password'
-    DB_NAME = 'bank_reviews'
-    DB_URI = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:5432/{DB_NAME}'
+    DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
 
     Base = declarative_base()
     # ------------------------------------------------------------------------------
@@ -276,6 +274,7 @@ def main():
     # 0.6 Insertion of data in database
     # --------------------------------------------------------
     insert_data_from_dataframe(df, session)
+    migration_to_decisionalDB(DB_NAME, DB_PASSWORD, session)
     # session.commit()
 
 if __name__ == "__main__":

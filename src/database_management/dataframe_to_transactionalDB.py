@@ -23,7 +23,6 @@ def insert_data_from_dataframe(df, session):
 
 
     for _, row in df.iterrows():
-        # S'assurer que les valeurs sont des chaînes de caractères
         country_name = str(row['Country'])
         town_name = str(row['Town'])
         bank_name = str(row['Bank_Name'])
