@@ -4,6 +4,7 @@ project_root = os.path.abspath(os.path.join(script_dir, '..'))
 sys.path.append(project_root)
 import psycopg2
 import subprocess
+from sqlalchemy.exc import IntegrityError
 
 
 import time
@@ -217,10 +218,15 @@ def main():
     # --------------------------------------------------------
     # 0.6 Insertion of data in database
     # --------------------------------------------------------
-    insert_data_from_dataframe(df, session)
-    migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
-    # session.commit()
+    try:
+        insert_data_from_dataframe(df, session)
+        migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
+        session.commit()
+    except IntegrityError as e:
+        print("Erreur d'intégrité : ", e)
+    session.rollback()
 
+    
 if __name__ == "__main__":
     main()
     

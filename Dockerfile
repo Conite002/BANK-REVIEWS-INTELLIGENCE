@@ -3,6 +3,18 @@ FROM ubuntu:22.04
 # Set the working directory
 WORKDIR /app
 
+# Set environment variables
+ENV ADMIN_USER=postgres
+ENV ADMIN_PASSWORD=postgres
+ENV HOST=postgres_db
+ENV PORT=5432
+ENV DB_USER=conite
+ENV DB_PASSWORD=conite_password
+ENV DB_NAME=bank_reviews
+ENV DECISIONALDB=decisional_db
+ENV FLASK_APP=superset
+
+
 # Ensure apt is in non-interactive to avoid issues with some packages
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -13,12 +25,6 @@ RUN apt-get update -o Acquire::Retries=3 && \
                        libasound2 libcurl4 libgbm1 libu2f-udev libvulkan1 && \
     apt-get install -y python3 python3-pip && \
     ln -s /usr/bin/python3 /usr/bin/python && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb && \
-    apt-get -f install -y && \  
-    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
-    unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ && \
-    rm /tmp/chromedriver.zip && \
     apt-get install -y curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -30,6 +36,9 @@ RUN apt-get update && \
 COPY . /app
 COPY requirements.txt /src/requirements.txt
 RUN pip3 install --no-cache-dir -r /src/requirements.txt
+RUN pip3 install --no-cache-dir pillow marshmallow-enum apache-superset
+RUN pip3 install --no-cache-dir apache-superset
+
 
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
@@ -38,5 +47,4 @@ RUN chmod +x /app/entrypoint.sh
 EXPOSE 80
 
 # Run main.py when the container launches
-# CMD service postgresql start && python3 /app/src/main.py
 ENTRYPOINT ["/app/entrypoint.sh"]

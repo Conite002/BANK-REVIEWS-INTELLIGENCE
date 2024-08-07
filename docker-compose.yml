@@ -29,6 +29,7 @@ services:
       - DB_NAME=bank_reviews
       - DB_PORT=5432
       - DB_HOST=postgres_db 
+      - FLASK_APP=superset
     depends_on:
       postgresql:
         condition: service_healthy
@@ -37,7 +38,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8000:80"  # Assuming your app runs on port 80 internally, map it to port 8000 externally
+      - "8088:8088"  # Assuming your app runs on port 80 internally, map it to port 8000 externally
       
     entrypoint: ["bash", "/app/entrypoint.sh"]
 

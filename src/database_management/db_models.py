@@ -53,6 +53,7 @@ class Sentiment(Base):
 class SubTopic(Base):
     __tablename__ = 'sub_topics'
     id = Column(Integer, primary_key=True)
+    topic_id = Column(Integer, ForeignKey('topics.id'), nullable=False)
     sub_topic_name = Column(String(255), unique=True, nullable=False)
 
 class Review(Base):
@@ -160,14 +161,14 @@ class SentimentManager:
 class SubTopicManager:
     def __init__(self, session):
         self.session = session
-    
-    def get_or_create_sub_topic(self, sub_topic_name):
-        sub_topic = self.session.query(SubTopic).filter_by(sub_topic_name=sub_topic_name).first()
-        if not sub_topic:
-            sub_topic = SubTopic(sub_topic_name=sub_topic_name)
-            self.session.add(sub_topic)
-            self.session.commit()
-        return sub_topic
+    def get_or_create_sub_topic(self, sub_topic_name, topic_id):
+        existing_sub_topic = self.session.query(SubTopic).filter_by(sub_topic_name=sub_topic_name).first()
+        if existing_sub_topic:
+            return existing_sub_topic
+        new_sub_topic = SubTopic(topic_id=topic_id, sub_topic_name=sub_topic_name)
+        self.session.add(new_sub_topic)
+        self.session.commit()
+        return new_sub_topic
 
 # Gestion des opérations liées aux avis
 class ReviewManager:

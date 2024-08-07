@@ -45,7 +45,7 @@ def insert_data_from_dataframe(df, session):
         reviewer = reviewer_manager.get_or_create_reviewer(reviewer_name, reviewer_profile_link)
         topic = topic_manager.get_or_create_topic(topic_name)
         sentiment = sentiment_manager.get_or_create_sentiment(sentiment_name)
-        sub_topic = sub_topic_manager.get_or_create_sub_topic(sub_topic_name)
+        sub_topic = sub_topic_manager.get_or_create_sub_topic(sub_topic_name, topic.id)
         
         # Handle NaN values in star_rating and like_reaction
         star_rating = row['Reviewer_Star'] if pd.notna(row['Reviewer_Star']) else 0  # Default value is 0 if NaN
