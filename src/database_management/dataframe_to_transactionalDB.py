@@ -28,9 +28,9 @@ def insert_data_from_dataframe(df, session):
         bank_name = str(row['Bank_Name'])
         reviewer_name = str(row['Reviewer_Name'])
         reviewer_profile_link = str(row['Reviewer_Profile_Link'])
-        topic_name = str(row['Topics'])
-        sentiment_name = str(row['Sentiments'])
-        sub_topic_name = str(row['Sub_Topics'])
+        topic_name = str(row['Topic'])
+        sentiment_name = str(row['Sentiment'])
+        sub_topic_name = str(row['Sub_Topic'])
         
         country = country_manager.get_or_create_country(country_name)
         town = town_manager.get_or_create_town(town_name, country.id)

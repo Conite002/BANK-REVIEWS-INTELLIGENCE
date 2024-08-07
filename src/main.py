@@ -27,6 +27,7 @@ import pandas as pd
 import sys
 from src.database_management.database_initializer import DatabaseInitializer, wait_for_postgresql
 from src.database_management.dataframe_to_transactionalDB import insert_data_from_dataframe
+from src.database_management.db_models import Base
 from src.database_management.migrate_to_decisionalDB import migration_to_decisionalDB
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
@@ -46,32 +47,32 @@ PARCKET_PATH = os.path.join(project_root, 'data', 'parquet', CURRENT_DATE)
 def main():
     chrome_options = Options()
     chrome_options.add_argument("--lang=fr")
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("headless")
     countries_cities = load_cities(CITIES_PATH)
 
-    for country, cities in countries_cities.items():
-        print("PULLING: ", country)
-        for city in tqdm(cities):
-            browser = webdriver.Chrome(options=chrome_options)
-            search_query = f"Banque {city}, {country}"
-            browser.get(f"https://www.google.com/maps/search/{search_query}")
-            time.sleep(20)
+    # for country, cities in countries_cities.items():
+    #     print("PULLING: ", country)
+    #     for city in tqdm(cities):
+    #         browser = webdriver.Chrome(options=chrome_options)
+    #         search_query = f"Banque {city}, {country}"
+    #         browser.get(f"https://www.google.com/maps/search/{search_query}")
+    #         time.sleep(20)
 
-            retry_attempts = 3
-            while retry_attempts > 0:
-                try:
-                    sites, action = primary_search(browser)
-                    extract(browser, sites, action, country, city, chrome_options, verbose=True)
-                    break  # Break if no exception
-                except StaleElementReferenceException:
-                    retry_attempts -= 1
-                    print(f"Retrying... ({3 - retry_attempts}/3)")
-                    time.sleep(2)  # Brief wait before retrying
-                except Exception as e:
-                    throw_error(e, location='main loop')
-                    break  # Break on other exceptions
+    #         retry_attempts = 3
+    #         while retry_attempts > 0:
+    #             try:
+    #                 sites, action = primary_search(browser)
+    #                 extract(browser, sites, action, country, city, chrome_options, verbose=True)
+    #                 break  # Break if no exception
+    #             except StaleElementReferenceException:
+    #                 retry_attempts -= 1
+    #                 print(f"Retrying... ({3 - retry_attempts}/3)")
+    #                 time.sleep(2)  # Brief wait before retrying
+    #             except Exception as e:
+    #                 throw_error(e, location='main loop')
+    #                 break  # Break on other exceptions
 
-            browser.quit()
+    #         browser.quit()
     # --------------------------------------------------------
     # 0.1 Build macro table
     # --------------------------------------------------------
@@ -176,70 +177,70 @@ def main():
     # ------------------------------------------------------------------------------
     DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
 
-    Base = declarative_base()
-    # ------------------------------------------------------------------------------
-    # Definition of modeles 
-    # ------------------------------------------------------------------------------
-    class Country(Base):
-        __tablename__ = 'countries'
-        id = Column(Integer, primary_key=True)
-        country_name = Column(String(255), unique=True, nullable=False) 
-        towns = relationship('Town', back_populates='country')
+    # Base = declarative_base()
+    # # ------------------------------------------------------------------------------
+    # # Definition of modeles 
+    # # ------------------------------------------------------------------------------
+    # class Country(Base):
+    #     __tablename__ = 'countries'
+    #     id = Column(Integer, primary_key=True)
+    #     country_name = Column(String(255), unique=True, nullable=False) 
+    #     towns = relationship('Town', back_populates='country')
 
-    class Town(Base):
-        __tablename__ = 'towns'
-        id = Column(Integer, primary_key=True)
-        town_name = Column(String(255), unique=True, nullable=False)
-        country_id = Column(Integer, ForeignKey('countries.id'))
-        country = relationship('Country', back_populates='towns')
-        banks = relationship('Bank', back_populates='town')
+    # class Town(Base):
+    #     __tablename__ = 'towns'
+    #     id = Column(Integer, primary_key=True)
+    #     town_name = Column(String(255), unique=True, nullable=False)
+    #     country_id = Column(Integer, ForeignKey('countries.id'))
+    #     country = relationship('Country', back_populates='towns')
+    #     banks = relationship('Bank', back_populates='town')
 
-    class Bank(Base):
-        __tablename__ = 'banks'
-        id = Column(Integer, primary_key=True)
-        bank_name = Column(String(255), nullable=False)
-        phone_number = Column(String(50))
-        address = Column(String(255))
-        website = Column(String(255))
-        town_id = Column(Integer, ForeignKey('towns.id'))
-        town = relationship('Town', back_populates='banks')
+    # class Bank(Base):
+    #     __tablename__ = 'banks'
+    #     id = Column(Integer, primary_key=True)
+    #     bank_name = Column(String(255), nullable=False)
+    #     phone_number = Column(String(50))
+    #     address = Column(String(255))
+    #     website = Column(String(255))
+    #     town_id = Column(Integer, ForeignKey('towns.id'))
+    #     town = relationship('Town', back_populates='banks')
 
 
-    class Reviewer(Base):
-        __tablename__ = 'reviewers'
-        id = Column(Integer, primary_key=True)
-        reviewer_name = Column(String(255))
-        profile_link = Column(String(255))
+    # class Reviewer(Base):
+    #     __tablename__ = 'reviewers'
+    #     id = Column(Integer, primary_key=True)
+    #     reviewer_name = Column(String(255))
+    #     profile_link = Column(String(255))
 
-    class Topic(Base):
-        __tablename__ = 'topics'
-        id = Column(Integer, primary_key=True)
-        topic_name = Column(String(255), unique=True, nullable=False)
+    # class Topic(Base):
+    #     __tablename__ = 'topics'
+    #     id = Column(Integer, primary_key=True)
+    #     topic_name = Column(String(255), unique=True, nullable=False)
 
-    class Sentiment(Base):
-        __tablename__ = 'sentiments'
-        id = Column(Integer, primary_key=True)
-        sentiment_name = Column(String(255), unique=True, nullable=False)
+    # class Sentiment(Base):
+    #     __tablename__ = 'sentiments'
+    #     id = Column(Integer, primary_key=True)
+    #     sentiment_name = Column(String(255), unique=True, nullable=False)
 
-    class SubTopic(Base):
-        __tablename__ = 'sub_topics'
-        id = Column(Integer, primary_key=True)
-        sub_topic_name = Column(String(255), unique=True, nullable=False)
+    # class SubTopic(Base):
+    #     __tablename__ = 'sub_topics'
+    #     id = Column(Integer, primary_key=True)
+    #     sub_topic_name = Column(String(255), unique=True, nullable=False)
 
-    class Review(Base):
-        __tablename__ = 'reviews'
-        id = Column(Integer, primary_key=True)
-        reviewer_id = Column(Integer, ForeignKey('reviewers.id'))
-        bank_id = Column(Integer, ForeignKey('banks.id'))
-        publish_date = Column(Date, nullable=False)
-        star_rating = Column(Integer, nullable=False)
-        review_text = Column(Text)
-        like_reaction = Column(Integer)
-        owner_reply = Column(Text)
-        owner_reply_date = Column(Date)
-        topic_id = Column(Integer, ForeignKey('topics.id'))
-        sentiment_id = Column(Integer, ForeignKey('sentiments.id'))
-        sub_topic_id = Column(Integer, ForeignKey('sub_topics.id'))
+    # class Review(Base):
+    #     __tablename__ = 'reviews'
+    #     id = Column(Integer, primary_key=True)
+    #     reviewer_id = Column(Integer, ForeignKey('reviewers.id'))
+    #     bank_id = Column(Integer, ForeignKey('banks.id'))
+    #     publish_date = Column(Date, nullable=False)
+    #     star_rating = Column(Integer, nullable=False)
+    #     review_text = Column(Text)
+    #     like_reaction = Column(Integer)
+    #     owner_reply = Column(Text)
+    #     owner_reply_date = Column(Date)
+    #     topic_id = Column(Integer, ForeignKey('topics.id'))
+    #     sentiment_id = Column(Integer, ForeignKey('sentiments.id'))
+    #     sub_topic_id = Column(Integer, ForeignKey('sub_topics.id'))
 
     # ------------------------------------------------------------------------------
     # Initialize database and create tables
@@ -248,7 +249,7 @@ def main():
     engine = create_engine(DB_URI)
     Session = sessionmaker(bind=engine)
     session = Session()
-    wait_for_postgresql(host=HOST, port=PORT, user=USERNAME, password=PASSWORD, dbname=DB_NAME)
+    wait_for_postgresql(host=HOST, port=PORT, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME)
     Base.metadata.create_all(engine)
 
     conn_params = {
