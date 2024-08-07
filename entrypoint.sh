@@ -23,10 +23,10 @@ echo -e "\033[92mPostgreSQL is up - connection successful\033[0m"
 # ollama pull llama3.1
 # Wait for Ollama
 # until curl -s http://ollama:11434/; do
-until curl -s http://localhost:11434/; do
-  echo "Waiting for Ollama..."
-  sleep 2
-done
+# until curl -s http://localhost:11434/; do
+#   echo "Waiting for Ollama..."
+#   sleep 2
+# done
 
 echo -e "\033[32m Ollama is up - connection successful!\033[0m"
 

@@ -126,10 +126,9 @@ def preprocess_dataframe(df):
         os.makedirs(output_directory)
     output_file = os.path.join(output_directory, 'macro_llamma.csv')
 
+    df_macro = pd.DataFrame()
+
     print(f"DIRECTORY : {output_directory}")
-    save_interval = 1
-    row_accumulated = 0
-    df_macro = df
     header_written = False
 
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
@@ -146,10 +145,7 @@ def preprocess_dataframe(df):
                 new_row['Topic'] = static_topic
                 new_row['Sentiment'] = static_sentiment
                 new_row['Sub_Topic'] = static_sub_topic
-                new_row_df = pd.DataFrame([new_row])
-                new_row_df.to_csv(output_file, mode='a', header=not header_written, index=False)
-                header_written = True
-                # df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
+                df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
             else:
                 for tuple_ in topics_array:
                     new_row = row.copy()
@@ -157,12 +153,10 @@ def preprocess_dataframe(df):
                     new_row['Sentiment'] = tuple_[1]
                     new_row['Sub_Topic'] = tuple_[2]
                     df_macro = pd.concat([df_macro, pd.DataFrame([new_row])], ignore_index=True)
-                    new_row_df.to_csv(output_file, mode='a', header=not header_written, index=False)
-                    header_written = True
-                
         except Exception as e:
             print(f"Erreur rencontrée à l'index {index}: {e}")
             pass
-
+    df_macro.to_csv(output_file, index=False)
+    print(f"File written to {output_file}")
     # return df
     return df_macro

@@ -40,6 +40,7 @@ DATA_PATH = os.path.join(project_root, 'data')
 CITIES_PATH = os.path.join(project_root, 'data', 'utils', 'countries_cities-full.json')
 RAW_SAVE_PATH = os.path.join(project_root, 'data', 'temp')
 PARCKET_PATH = os.path.join(project_root, 'data', 'parquet', CURRENT_DATE)
+PROCESSED_DATA_PATH = os.path.join(project_root, 'data', 'processed', CURRENT_DATE)
 # sys.path.append('/')
 
 
@@ -77,13 +78,21 @@ def main():
     # 0.1 Build macro table
     # --------------------------------------------------------
     
-    concatenate_parquets = build_macro_table(DATA_PATH)
+    # concatenate_parquets = build_macro_table(DATA_PATH)
 
     # --------------------------------------------------------
     # 0.3 Preprocessing of concatenate parquets
     # --------------------------------------------------------
-    df = preprocess_dataframe(concatenate_parquets)
+    # df = preprocess_dataframe(concatenate_parquets)
 
+    output_file = os.path.join(PROCESSED_DATA_PATH, 'macro_llamma.csv')
+
+    # Vérifier si le fichier existe et le lire, sinon créer un DataFrame vide
+    if os.path.exists(output_file):
+        df = pd.read_csv(output_file)
+    else:
+        print(f"File doesn't existe")
+    
     # --------------------------------------------------------
     # 0.4 Remove some columns
     # --------------------------------------------------------
@@ -164,6 +173,7 @@ def main():
     DB_USER = 'conite'
     DB_PASSWORD = 'conite_password'
     DB_NAME = 'bank_reviews'
+    DECISIONALDB = 'decisional_db'
 
     # --------------------------------------------------------------------------
     # Database Initialization
@@ -171,80 +181,13 @@ def main():
     db_initializer = DatabaseInitializer(ADMIN_USER, ADMIN_PASSWORD, HOST, PORT)
 
     db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DB_NAME)
+    db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DECISIONALDB)
 
+    
     # ------------------------------------------------------------------------------
     # Configuration de la base de donnees
     # ------------------------------------------------------------------------------
     DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
-
-    # Base = declarative_base()
-    # # ------------------------------------------------------------------------------
-    # # Definition of modeles 
-    # # ------------------------------------------------------------------------------
-    # class Country(Base):
-    #     __tablename__ = 'countries'
-    #     id = Column(Integer, primary_key=True)
-    #     country_name = Column(String(255), unique=True, nullable=False) 
-    #     towns = relationship('Town', back_populates='country')
-
-    # class Town(Base):
-    #     __tablename__ = 'towns'
-    #     id = Column(Integer, primary_key=True)
-    #     town_name = Column(String(255), unique=True, nullable=False)
-    #     country_id = Column(Integer, ForeignKey('countries.id'))
-    #     country = relationship('Country', back_populates='towns')
-    #     banks = relationship('Bank', back_populates='town')
-
-    # class Bank(Base):
-    #     __tablename__ = 'banks'
-    #     id = Column(Integer, primary_key=True)
-    #     bank_name = Column(String(255), nullable=False)
-    #     phone_number = Column(String(50))
-    #     address = Column(String(255))
-    #     website = Column(String(255))
-    #     town_id = Column(Integer, ForeignKey('towns.id'))
-    #     town = relationship('Town', back_populates='banks')
-
-
-    # class Reviewer(Base):
-    #     __tablename__ = 'reviewers'
-    #     id = Column(Integer, primary_key=True)
-    #     reviewer_name = Column(String(255))
-    #     profile_link = Column(String(255))
-
-    # class Topic(Base):
-    #     __tablename__ = 'topics'
-    #     id = Column(Integer, primary_key=True)
-    #     topic_name = Column(String(255), unique=True, nullable=False)
-
-    # class Sentiment(Base):
-    #     __tablename__ = 'sentiments'
-    #     id = Column(Integer, primary_key=True)
-    #     sentiment_name = Column(String(255), unique=True, nullable=False)
-
-    # class SubTopic(Base):
-    #     __tablename__ = 'sub_topics'
-    #     id = Column(Integer, primary_key=True)
-    #     sub_topic_name = Column(String(255), unique=True, nullable=False)
-
-    # class Review(Base):
-    #     __tablename__ = 'reviews'
-    #     id = Column(Integer, primary_key=True)
-    #     reviewer_id = Column(Integer, ForeignKey('reviewers.id'))
-    #     bank_id = Column(Integer, ForeignKey('banks.id'))
-    #     publish_date = Column(Date, nullable=False)
-    #     star_rating = Column(Integer, nullable=False)
-    #     review_text = Column(Text)
-    #     like_reaction = Column(Integer)
-    #     owner_reply = Column(Text)
-    #     owner_reply_date = Column(Date)
-    #     topic_id = Column(Integer, ForeignKey('topics.id'))
-    #     sentiment_id = Column(Integer, ForeignKey('sentiments.id'))
-    #     sub_topic_id = Column(Integer, ForeignKey('sub_topics.id'))
-
-    # ------------------------------------------------------------------------------
-    # Initialize database and create tables
-    # ------------------------------------------------------------------------------
 
     engine = create_engine(DB_URI)
     Session = sessionmaker(bind=engine)
@@ -275,7 +218,7 @@ def main():
     # 0.6 Insertion of data in database
     # --------------------------------------------------------
     insert_data_from_dataframe(df, session)
-    migration_to_decisionalDB(DB_NAME, DB_PASSWORD, session)
+    migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
     # session.commit()
 
 if __name__ == "__main__":

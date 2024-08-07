@@ -4,10 +4,9 @@ from sqlalchemy.orm import sessionmaker
 
 
 
-def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine, DB_NAME='decisional_db', HOST='HOST'):
+def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='decisional_db', HOST='HOST'):
 
     # Decision-support database connection
-    decis_db_url = 'postgresql://username:password@localhost:5432/decisional_db'
     DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
 
     decis_engine = create_engine(DB_URI)
