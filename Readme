@@ -95,6 +95,20 @@ Plan Outline
 
 * Visualization
 
+# -------------------------------------------------------
+# Installation and Launch Superset
+# -------------------------------------------------------
+
+Make it executable:
+
+bash
+Copy code
+chmod +x install_and_launch_superset.sh
+Run the script:
+
+bash
+Copy code
+sudo ./install_and_launch_superset.sh
 
 # -----------------------------------------------------------
 # Directory Structure 

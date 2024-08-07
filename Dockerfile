@@ -12,7 +12,6 @@ ENV DB_USER=conite
 ENV DB_PASSWORD=conite_password
 ENV DB_NAME=bank_reviews
 ENV DECISIONALDB=decisional_db
-ENV FLASK_APP=superset
 
 
 # Ensure apt is in non-interactive to avoid issues with some packages
@@ -36,8 +35,7 @@ RUN apt-get update && \
 COPY . /app
 COPY requirements.txt /src/requirements.txt
 RUN pip3 install --no-cache-dir -r /src/requirements.txt
-RUN pip3 install --no-cache-dir pillow marshmallow-enum apache-superset
-RUN pip3 install --no-cache-dir apache-superset
+
 
 
 COPY entrypoint.sh /app/entrypoint.sh
