@@ -31,7 +31,7 @@ from src.database_management.dataframe_to_transactionalDB import insert_data_fro
 from src.database_management.db_models import Base
 from src.database_management.migrate_to_decisionalDB import migration_to_decisionalDB
 from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker, relationship, declarative_base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, Column, Integer, String, Text, Date, ForeignKey, insert
 
 # ----------------------------------------------------------
@@ -49,42 +49,42 @@ PROCESSED_DATA_PATH = os.path.join(project_root, 'data', 'processed', CURRENT_DA
 def main():
     chrome_options = Options()
     chrome_options.add_argument("--lang=fr")
-    chrome_options.add_argument("headless")
+    # chrome_options.add_argument("--headless")
     countries_cities = load_cities(CITIES_PATH)
 
-    # for country, cities in countries_cities.items():
-    #     print("PULLING: ", country)
-    #     for city in tqdm(cities):
-    #         browser = webdriver.Chrome(options=chrome_options)
-    #         search_query = f"Banque {city}, {country}"
-    #         browser.get(f"https://www.google.com/maps/search/{search_query}")
-    #         time.sleep(20)
+    for country, cities in countries_cities.items():
+        print("PULLING: ", country)
+        for city in tqdm(cities):
+            browser = webdriver.Chrome(options=chrome_options)
+            search_query = f"Banque {city}, {country}"
+            browser.get(f"https://www.google.com/maps/search/{search_query}")
+            time.sleep(20)
 
-    #         retry_attempts = 3
-    #         while retry_attempts > 0:
-    #             try:
-    #                 sites, action = primary_search(browser)
-    #                 extract(browser, sites, action, country, city, chrome_options, verbose=True)
-    #                 break  # Break if no exception
-    #             except StaleElementReferenceException:
-    #                 retry_attempts -= 1
-    #                 print(f"Retrying... ({3 - retry_attempts}/3)")
-    #                 time.sleep(2)  # Brief wait before retrying
-    #             except Exception as e:
-    #                 throw_error(e, location='main loop')
-    #                 break  # Break on other exceptions
+            retry_attempts = 3
+            while retry_attempts > 0:
+                try:
+                    sites, action = primary_search(browser)
+                    extract(browser, sites, action, country, city, chrome_options, verbose=True)
+                    break  # Break if no exception
+                except StaleElementReferenceException:
+                    retry_attempts -= 1
+                    print(f"Retrying... ({3 - retry_attempts}/3)")
+                    time.sleep(2)  # Brief wait before retrying
+                except Exception as e:
+                    throw_error(e, location='main loop')
+                    break  # Break on other exceptions
 
-    #         browser.quit()
+            browser.quit()
     # --------------------------------------------------------
     # 0.1 Build macro table
     # --------------------------------------------------------
     
-    # concatenate_parquets = build_macro_table(DATA_PATH)
+    concatenate_parquets = build_macro_table(DATA_PATH)
 
     # --------------------------------------------------------
     # 0.3 Preprocessing of concatenate parquets
     # --------------------------------------------------------
-    # df = preprocess_dataframe(concatenate_parquets)
+    df = preprocess_dataframe(concatenate_parquets)
 
     output_file = os.path.join(PROCESSED_DATA_PATH, 'macro_llamma.csv')
 
