@@ -1,5 +1,7 @@
 ## BRI 
 BankReviewIntelligence :  Insightful analytics and decision-making support based on customer reviews of banks.
+This project aims to provide in-depth analysis and visualizations of customer reviews of banks. Data is extracted, transformed and loaded into a business intelligence database, then used to create interactive and informative visualizations.
+
 
 
 ## Architecture
