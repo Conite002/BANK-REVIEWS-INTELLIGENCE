@@ -8,11 +8,9 @@ This project aims to provide in-depth analysis and visualizations of customer re
 <img src="./architecture.jpg" alt="project architecture draft" style="width: 100%"/>
 
 
-# ------------------------------------------------------------
-Plan Outline
-# ------------------------------------------------------------
+# Plan Outline
 
-### 01 Data Collection:
+## 01 Data Collection:
 
 * Load Cities: Load city data from a JSON file.
 * Scrape Reviews: Use Selenium to scrape reviews from Google Maps.
@@ -97,9 +95,7 @@ Plan Outline
 
 * Visualization
 
-# -------------------------------------------------------
-# Installation and Launch Superset
-# -------------------------------------------------------
+## Installation and Launch Superset
 
 Make it executable:
 
@@ -112,50 +108,63 @@ bash
 Copy code
 sudo ./install_and_launch_superset.sh
 
-# -----------------------------------------------------------
-# Directory Structure 
-# ------------------------------------------------------------
+## Directory Structure 
 
-BRI/
-│
-├── data/
-│   ├── raw/                 # Données brutes collectées
-│   ├── processed/           # Données après prétraitement
-│   ├── temp/                # Fichiers temporaires
-│   └── parquet/             # Fichiers Parquet
-│
-├── src/
-│   ├── __init__.py
-│   ├── config.py            # Configuration et paramètres
-│   ├── data_collection/
-│   │   ├── __init__.py
-│   │   ├── scraper.py       # Logique de collecte de données
-│   │   └── utils.py         # Fonctions utilitaires pour la collecte
-│   │
-│   ├── data_concatenation/
-│   │   ├── __init__.py
-│   │   └── concatenate.py   # Logique de concaténation des données
-│   │
-│   ├── data_preprocessing/
-│   │   ├── __init__.py
-│   │   ├── preprocessing.py # Prétraitement des données
-│   │   └── utils.py         # Fonctions utilitaires pour le prétraitement
-│   │
-│   ├── database_management/
-│   │   ├── __init__.py
-│   │   ├── db_models.py     # Définition des modèles de la base de données
-│   │   └── database_initializer.py # Création et gestion de la base de données
-│   │
-│   ├── visualization/
-│   │   ├── __init__.py
-│   │   └── visualization.py # Logique de visualisation (optionnel)
-│   │
-│   └── main.py              # Point d'entrée principal
-│
-├── Dockerfile
-├── docker-compose.yml       # Fichier de configuration Docker Compose
-├── requirements.txt         # Dépendances Python
-├── .dockerignore            # Fichiers et répertoires à ignorer par Docker
-├── .gitignore               # Fichiers et répertoires à ignorer par Git
-└── README.md                # Documentation du projet
+      BRI/
+      │
+      ├── data/
+      │   ├── raw/                 # Données brutes collectées
+      │   ├── processed/           # Données après prétraitement
+      │   ├── temp/                # Fichiers temporaires
+      │   └── parquet/             # Fichiers Parquet
+      │
+      ├── src/
+      │   ├── __init__.py
+      │   ├── config.py            # Configuration et paramètres
+      │   ├── data_collection/
+      │   │   ├── __init__.py
+      │   │   ├── scraper.py       # Logique de collecte de données
+      │   │   └── utils.py         # Fonctions utilitaires pour la collecte
+      │   │
+      │   ├── data_concatenation/
+      │   │   ├── __init__.py
+      │   │   └── concatenate.py   # Logique de concaténation des données
+      │   │
+      │   ├── data_preprocessing/
+      │   │   ├── __init__.py
+      │   │   ├── preprocessing.py # Prétraitement des données
+      │   │   └── utils.py         # Fonctions utilitaires pour le prétraitement
+      │   │
+      │   ├── database_management/
+      │   │   ├── __init__.py
+      │   │   ├── db_models.py     # Définition des modèles de la base de données
+      │   │   └── database_initializer.py # Création et gestion de la base de données
+      │   │
+      │   ├── visualization/
+      │   │   ├── __init__.py
+      │   │   └── visualization.py # Logique de visualisation (optionnel)
+      │   │
+      │   └── main.py              # Point d'entrée principal
+      │
+      ├── Dockerfile
+      ├── docker-compose.yml       # Fichier de configuration Docker Compose
+      ├── requirements.txt         # Dépendances Python
+      ├── .dockerignore            # Fichiers et répertoires à ignorer par Docker
+      ├── .gitignore               # Fichiers et répertoires à ignorer par Git
+      ├── README.md                # Documentation du projet
+      ├── entrypoint.sh            # 
+      ├── install_and_launch_superset.sh            # 
+      ├── Dockerfile.ollama
+      └── superset_config.py
+
+## Installation and Launch Superset
+Make it executable:
+chmod +x install_and_launch_superset.sh
+./install_and_launch_superset.sh
+
+```I used LLaMA 3.1 with Docker before. However, for performance reasons, I removed it from Docker and ran it on my local machine.```
+
+## Run postgreSQL
+docker compose build
+docker compose up
 

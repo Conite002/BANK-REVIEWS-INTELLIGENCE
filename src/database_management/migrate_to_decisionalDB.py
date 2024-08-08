@@ -3,13 +3,11 @@ from sqlalchemy.orm import sessionmaker
 import pandas as pd
 
 def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='decisional_db', HOST='localhost'):
-    # Connexion à la base de données décisionnelle
     DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
     decis_engine = create_engine(DB_URI)
     DecisSession = sessionmaker(bind=decis_engine)
     decis_session = DecisSession()
 
-    # Extraction des données depuis la base de données transactionnelle
     countries = pd.read_sql('SELECT * FROM countries', trans_engine)
     towns = pd.read_sql('SELECT * FROM towns', trans_engine)
     banks = pd.read_sql('SELECT * FROM banks', trans_engine)
@@ -19,7 +17,6 @@ def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='
     sub_topics = pd.read_sql('SELECT * FROM sub_topics', trans_engine)
     reviews = pd.read_sql('SELECT * FROM reviews', trans_engine)
 
-    # Combinaison des topics et sub_topics dans un seul DataFrame
     topics_with_sub_topics = topics.merge(sub_topics, left_on='id', right_on='topic_id', suffixes=('_topic', '_sub_topic'))
     columns_needed = ['id', 'topic_id', 'sub_topic_name']
     missing_columns = [col for col in columns_needed if col not in topics_with_sub_topics.columns]
@@ -32,7 +29,6 @@ def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='
     else:
         raise ValueError(f"Le nombre de colonnes dans le DataFrame ({len(topics_with_sub_topics.columns)}) ne correspond pas au nombre de nouveaux noms ({len(new_column_names)})")
 
-    # Chargement des données dans la base de données décisionnelle
     countries.to_sql('dimension_country', decis_engine, if_exists='replace', index=False)
     towns.to_sql('dimension_town', decis_engine, if_exists='replace', index=False)
     banks.to_sql('dimension_bank', decis_engine, if_exists='replace', index=False)
@@ -40,7 +36,6 @@ def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='
     topics_with_sub_topics.to_sql('dimension_topic', decis_engine, if_exists='replace', index=False)
     sentiments.to_sql('dimension_sentiment', decis_engine, if_exists='replace', index=False)
 
-    # Préparation de la table Dimension_Time
     print("Columns in reviews before creating time_df:", reviews.columns)  # Diagnostic print
 
     if 'publish_date' in reviews.columns:
@@ -61,11 +56,9 @@ def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='
     fact_reviews['count_review'] = 1  # Ajouter une colonne pour le comptage des avis
     fact_reviews = fact_reviews.groupby(['review_id', 'bank_id', 'reviewer_id', 'publish_date', 'star_rating', 'like_reaction', 'topic_id', 'sentiment_id']).sum().reset_index()
 
-    # Insertion des faits en utilisant des clés étrangères
     time_df = pd.read_sql('SELECT * FROM dimension_time', decis_engine)
     print("Columns in time_df after loading from database:", time_df.columns)  # Diagnostic print
 
-    # Vérification de l'existence de 'publish_date'
     if 'publish_date' in time_df.columns:
         fact_reviews = fact_reviews.merge(time_df[['publish_date', 'week']], 
                                           left_on='publish_date', 
@@ -78,7 +71,6 @@ def migration_to_decisionalDB(DB_USER, DB_PASSWORD, trans_engine=None, DB_NAME='
     fact_reviews.columns = ['review_id', 'bank_id', 'reviewer_id', 'time_week', 'topic_id', 'sentiment_id', 'count_review']
     fact_reviews.to_sql('fact_reviews', decis_engine, if_exists='replace', index=False)
 
-    # Impression de l'état d'avancement avec une couleur verte
     print("\033[1;92mMIGRATION TO DECISION-SUPPORT DATABASE COMPLETED SUCCESSFULLY.\033[0m")
     print("\033[1;94mTables created in decision-support database:\033[0m")
     print("\033[1;94m [dimension_country, dimension_town, dimension_bank, dimension_reviewer, dimension_time, dimension_topic, dimension_sentiment, fact_reviews]\033[0m")

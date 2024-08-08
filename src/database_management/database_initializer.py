@@ -16,7 +16,6 @@ class DatabaseInitializer:
 
     def create_database_and_user(self, new_db_user, new_db_password, new_db_name):
         try:
-            # Connexion à PostgreSQL en tant qu'administrateur
             admin_conn = psycopg2.connect(
                 dbname='postgres',
                 user=self.admin_user,
@@ -27,29 +26,24 @@ class DatabaseInitializer:
             admin_conn.autocommit = True
             admin_cursor = admin_conn.cursor()
 
-            # Vérification si l'utilisateur existe déjà
             admin_cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), (new_db_user,))
             user_exists = admin_cursor.fetchone()
 
             if user_exists:
                 print(f"User {new_db_user} already exists.")
             else:
-                # Création d'un nouvel utilisateur
                 admin_cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s").format(sql.Identifier(new_db_user)), (new_db_password,))
                 print(f"User {new_db_user} created successfully.")
 
-            # Vérification si la base de données existe déjà
             admin_cursor.execute(sql.SQL("SELECT 1 FROM pg_database WHERE datname=%s"), (new_db_name,))
             db_exists = admin_cursor.fetchone()
 
             if db_exists:
                 print(f"Database {new_db_name} already exists.")
             else:
-                # Création d'une nouvelle base de données
                 admin_cursor.execute(sql.SQL("CREATE DATABASE {} WITH OWNER {}").format(sql.Identifier(new_db_name), sql.Identifier(new_db_user)))
                 print(f"Database {new_db_name} created successfully.")
 
-            # Connexion à la nouvelle base de données pour accorder des privilèges
             db_conn = psycopg2.connect(
                 dbname=new_db_name,
                 user=self.admin_user,
@@ -60,15 +54,12 @@ class DatabaseInitializer:
             db_conn.autocommit = True
             db_cursor = db_conn.cursor()
 
-            # Grant all privileges on the database to the user
             db_cursor.execute(sql.SQL("GRANT ALL PRIVILEGES ON DATABASE {} TO {}").format(sql.Identifier(new_db_name), sql.Identifier(new_db_user)))
             print(f"Granted all privileges on database {new_db_name} to user {new_db_user}.")
 
-            # Grant all privileges on the public schema to the user
             db_cursor.execute(sql.SQL("GRANT ALL PRIVILEGES ON SCHEMA public TO {}").format(sql.Identifier(new_db_user)))
             print(f"Granted all privileges on schema public to user {new_db_user}.")
 
-            # Fermeture de la connexion
             admin_cursor.close()
             admin_conn.close()
             db_cursor.close()
@@ -78,7 +69,6 @@ class DatabaseInitializer:
 
     def drop_database_and_user(self, db_user, db_name):
         try:
-            # Connexion à PostgreSQL en tant qu'administrateur
             admin_conn = psycopg2.connect(
                 dbname='postgres',
                 user=self.admin_user,
@@ -89,18 +79,14 @@ class DatabaseInitializer:
             admin_conn.autocommit = True
             admin_cursor = admin_conn.cursor()
 
-            # Révocation des droits de l'utilisateur sur la base de données
             admin_cursor.execute(sql.SQL("REVOKE ALL PRIVILEGES ON DATABASE {} FROM {}").format(sql.Identifier(db_name), sql.Identifier(db_user)))
 
-            # Suppression de la base de données
             admin_cursor.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(db_name)))
             print(f"Database {db_name} dropped successfully.")
 
-            # Suppression de l'utilisateur
             admin_cursor.execute(sql.SQL("DROP USER IF EXISTS {}").format(sql.Identifier(db_user)))
             print(f"User {db_user} dropped successfully.")
 
-            # Fermeture de la connexion
             admin_cursor.close()
             admin_conn.close()
         except Exception as e:

@@ -16,6 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import json, re
+from json.decoder import JSONDecodeError
 import stat
 from loguru import logger
 from utils import is_website_url, is_phone_number,create_directory, load_from_config, save_to_config
@@ -27,13 +28,13 @@ import pandas as pd
 
 BASIC_PROD = '.'
 CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
-CITIES_PATH = os.path.join(BASIC_PROD, 'row_data', 'utils', 'countries_cities-full.json')
-RAW_SAVE_PATH = os.path.join(BASIC_PROD, 'row_data', 'temp')
-PARCKET_PATH = os.path.join(BASIC_PROD, 'row_data', 'parcket', CURRENT_DATE)
+CITIES_PATH = os.path.join(BASIC_PROD, 'data', 'utils', 'countries_cities-full.json')
+RAW_SAVE_PATH = os.path.join(BASIC_PROD, 'data', 'temp')
+PARCKET_PATH = os.path.join(BASIC_PROD, 'data', 'parcket', CURRENT_DATE)
 sys.path.append('/')
 
 def save_data_to_parquet(country, city, data):
-    output_dir = f"row_data/parquet/{time.strftime('%Y-%m-%d')}/{country}"
+    output_dir = f"data/parquet/{time.strftime('%Y-%m-%d')}/{country}"
     os.makedirs(output_dir, exist_ok=True)
     
     df = pd.DataFrame(data)
@@ -81,7 +82,6 @@ def primary_search(browser):
             time.sleep(2)
             continue
     return a, action
-    import json
 
 
 # def extract_review(browser, action, verbose=False):
@@ -178,11 +178,11 @@ def extract_review(browser, action, verbose=False):
     state = load_from_config(name='state')
     if state == 'initial':
         reviews = initial_puller(reviews_blocs, reviews)
-        save_to_config(name='state', value='recurrente')
-        save_to_config(name='last_pull_date', value=datetime.now())
+        # save_to_config(name='state', value='recurrente')
+        # save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     elif state == 'recurrente':
-        reviews = recurrente_puller(reviews)
-        save_to_config(name='last_pull_date', value=datetime.now())
+        reviews = recurrente_puller(reviews_blocs=reviews_blocs, reviews=reviews)
+        # save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     else:
         logger.error(f"Etat inconnu: {state}")
     return reviews
@@ -220,15 +220,35 @@ def initial_puller(reviews_blocs, reviews):
 
 def recurrente_puller(reviews_blocs, reviews):
     LAST_PULL_DATE = load_from_config(name='last_pull_date')
+    
+    if isinstance(LAST_PULL_DATE, str):
+        try:
+            LAST_PULL_DATE = datetime.fromisoformat(LAST_PULL_DATE)
+        except ValueError:
+            logger.error("Invalid datetime string for last_pull_date")
+            LAST_PULL_DATE = None
     for bloc in reviews_blocs:
         html_content = bloc.get_attribute('outerHTML')
         html_content = BeautifulSoup(html_content, 'html.parser')
         try:
             reviewer_publish_data = html_content.find('span', {"class": "rsqaWe"}).text
-            publish_date = parse_relative_date(reviewer_publish_data)
+            print(f"reviewer_publish_data {reviewer_publish_data}")
 
-            if publish_date <= LAST_PULL_DATE:
+            print(f"Raw reviewer_publish_data: {reviewer_publish_data}")
+            publish_date = parse_relative_date(reviewer_publish_data)
+            print(f"Parsed publish_date: {publish_date}")
+
+            logger.debug(f"LAST_PULL_DATE: {LAST_PULL_DATE}, publish_date: {publish_date}")
+            if publish_date is None:
+                logger.warning(f"Could not parse publish date from '{reviewer_publish_data}'")
                 continue
+
+            if LAST_PULL_DATE and publish_date <= LAST_PULL_DATE:
+                continue
+
+            if LAST_PULL_DATE and publish_date <= LAST_PULL_DATE:
+                continue
+
             reviewer_name = html_content.find('div', {"class": "d4r55"}).text
             reviewer_star = len(html_content.findAll('span', {"class": "hCCjke google-symbols NhBTye elGi1d"}))
             reviewer_text = html_content.find('span', {"class": "wiI7pd"}).text if html_content.find('span', {"class": "wiI7pd"}) else "NAN"
@@ -249,6 +269,7 @@ def recurrente_puller(reviews_blocs, reviews):
         except Exception as e:
             logger.error(f"An error occurred in extract_review: {e}")
             continue
+    return reviews
 
 
 
@@ -297,7 +318,7 @@ def extract(browser, sites, action, country, city, chrome_options, verbose=False
                     browser.execute_script("arguments[0].scrollIntoView(true);", sites[i])
                     time.sleep(2)
                     sites[i].click()
-                time.sleep(8)
+                time.sleep(5)
                 break
             except StaleElementReferenceException:
                 logger.warning(f"Stale element reference: {sites[i]} for {city} in {country}")
@@ -353,7 +374,7 @@ def extract(browser, sites, action, country, city, chrome_options, verbose=False
                 logger.info(f"Name: {name}\nPhone: {phone}\nAddress: {address}\nWebsite: {website}")
 
             bank_details = (country, city, name, phone, address, website)
-            reviews = extract_review(browser, action)
+            reviews = extract_review(browser, action) or []
             logger.info(f"Number of reviews found: {len(reviews)}")
 
             total_reviews += len(reviews)
@@ -363,12 +384,18 @@ def extract(browser, sites, action, country, city, chrome_options, verbose=False
                 df['Reviewer_Like_Reaction'] = df['Reviewer_Like_Reaction'].astype(int)
                 df.to_csv(temp_csv_path, mode='a', header=False, index=False, encoding='utf-8')
 
+
+        except JSONDecodeError as json_err:
+            logger.error(f"JSONDecodeError: {json_err} while parsing bank info")
+        except ValueError as val_err:
+            logger.error(f"ValueError: {val_err} while processing review data")
         except Exception as e:
             logger.error(f"Error occurred while extracting bank info: {e}")
             continue
 
         logger.info(f"Total number of reviews extracted: {total_reviews}")
-
+    save_to_config(name='state', value='recurrente')
+    save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     save_data_to_parquet(country, city, pd.read_csv(temp_csv_path))
     return reviews
 
