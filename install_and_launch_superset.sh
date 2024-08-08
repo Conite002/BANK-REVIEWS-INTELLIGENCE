@@ -56,10 +56,7 @@ pip install --upgrade pip
 # Install Apache Superset
 log "Installing Apache Superset"
 pip install apache-superset
-
-
-
-
+pip install psycopg2-binary
 
 
 # Initialize Superset and start the server
@@ -74,3 +71,5 @@ log "Superset installation and initialization complete"
 # Start Superset
 log "Starting Superset server on port $SUPSET_PORT"
 superset run -p "$SUPSET_PORT" --with-threads --reload --debugger
+
+log "Run this to see address of postgres container : docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres_db"

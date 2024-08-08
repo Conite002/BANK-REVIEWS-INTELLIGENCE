@@ -20,6 +20,8 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+    networks:
+      - mynetwork
 
   app:
     build: .
@@ -61,7 +63,9 @@ services:
   #     interval: 30s
   #     timeout: 30s
   #     retries: 3
-
+networks:
+  mynetwork:
+  
 volumes:
   postgres_data:
   ollama: {}
