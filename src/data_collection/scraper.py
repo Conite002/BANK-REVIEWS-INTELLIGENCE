@@ -19,7 +19,7 @@ import json, re
 from json.decoder import JSONDecodeError
 import stat
 from loguru import logger
-from utils import is_website_url, is_phone_number,create_directory, load_from_config, save_to_config
+from src.data_collection.utils import is_website_url, is_phone_number,create_directory, load_from_config, save_to_config
 from src.data_preprocessing.utils import parse_relative_date
 import pandas as pd
 
@@ -281,16 +281,22 @@ def extract(browser, sites, action, country, city, chrome_options, verbose=False
     logger.info(f"Numbers of banks founded {len(sites)}")
     columns = ['Country', 'Town', 'Bank_Name', 'Bank_Phone_number', 'Bank_Address', 'Bank_Website', 'Reviewer_Name', 'Reviewer_Star', 'Reviewer_Text', 'Reviewer_Publish_Date', 'Reviewer_Like_Reaction', 'Reviewer_Profile_Link', 'Reviewer_Owner_Reply', 'Reviewer_Owner_Reply_Date']
     df = pd.DataFrame(columns=columns)
+    
     temp_csv_path = os.path.join(RAW_SAVE_PATH, f"pull-{city}-{country}-{CURRENT_DATE}.csv")
 
     try:
         create_directory(RAW_SAVE_PATH)
-        df.to_csv(temp_csv_path, index=False, encoding='utf-8')
-        logger.info(f"File created successfully at {temp_csv_path}")
+        if not os.path.exists(temp_csv_path):
+            df.to_csv(temp_csv_path, index=False, encoding='utf-8')
+            logger.info(f"File created successfully at {temp_csv_path}")
+        else:
+            logger.info(f"File already exists at {temp_csv_path}")
+            return 
     except PermissionError as e:
         logger.error(f"PermissionError: {e}")
     except Exception as e:
         logger.error(f"An error occurred: {e}")
+
 
     total_reviews = 0
     for i in tqdm(range(len(sites))):
@@ -394,8 +400,6 @@ def extract(browser, sites, action, country, city, chrome_options, verbose=False
             continue
 
         logger.info(f"Total number of reviews extracted: {total_reviews}")
-    save_to_config(name='state', value='recurrente')
-    save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     save_data_to_parquet(country, city, pd.read_csv(temp_csv_path))
     return reviews
 

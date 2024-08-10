@@ -5,6 +5,7 @@ sys.path.append(project_root)
 import psycopg2
 import subprocess
 from sqlalchemy.exc import IntegrityError
+from src.data_collection.utils import is_website_url, is_phone_number,create_directory, load_from_config, save_to_config
 
 
 import time
@@ -51,6 +52,7 @@ def main():
     chrome_options.add_argument("--lang=fr")
     # chrome_options.add_argument("--headless")
     countries_cities = load_cities(CITIES_PATH)
+    # temp_csv_path = os.path.join(RAW_SAVE_PATH, f"pull-{city}-{country}-{CURRENT_DATE}.csv")
 
     for country, cities in countries_cities.items():
         print("PULLING: ", country)
@@ -75,6 +77,8 @@ def main():
                     break  # Break on other exceptions
 
             browser.quit()
+    save_to_config(name='state', value='recurrente')
+    save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     # --------------------------------------------------------
     # 0.1 Build macro table
     # --------------------------------------------------------
