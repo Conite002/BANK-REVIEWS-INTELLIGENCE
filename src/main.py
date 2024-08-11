@@ -54,31 +54,31 @@ def main():
     countries_cities = load_cities(CITIES_PATH)
     # temp_csv_path = os.path.join(RAW_SAVE_PATH, f"pull-{city}-{country}-{CURRENT_DATE}.csv")
 
-    for country, cities in countries_cities.items():
-        print("PULLING: ", country)
-        for city in tqdm(cities):
-            browser = webdriver.Chrome(options=chrome_options)
-            search_query = f"Banque {city}, {country}"
-            browser.get(f"https://www.google.com/maps/search/{search_query}")
-            time.sleep(20)
+    # for country, cities in countries_cities.items():
+    #     print("PULLING: ", country)
+    #     for city in tqdm(cities):
+    #         browser = webdriver.Chrome(options=chrome_options)
+    #         search_query = f"Banque {city}, {country}"
+    #         browser.get(f"https://www.google.com/maps/search/{search_query}")
+    #         time.sleep(20)
 
-            retry_attempts = 3
-            while retry_attempts > 0:
-                try:
-                    sites, action = primary_search(browser)
-                    extract(browser, sites, action, country, city, chrome_options, verbose=True)
-                    break  # Break if no exception
-                except StaleElementReferenceException:
-                    retry_attempts -= 1
-                    print(f"Retrying... ({3 - retry_attempts}/3)")
-                    time.sleep(2)  # Brief wait before retrying
-                except Exception as e:
-                    throw_error(e, location='main loop')
-                    break  # Break on other exceptions
+    #         retry_attempts = 3
+    #         while retry_attempts > 0:
+    #             try:
+    #                 sites, action = primary_search(browser)
+    #                 extract(browser, sites, action, country, city, chrome_options, verbose=True)
+    #                 break  # Break if no exception
+    #             except StaleElementReferenceException:
+    #                 retry_attempts -= 1
+    #                 print(f"Retrying... ({3 - retry_attempts}/3)")
+    #                 time.sleep(2)  # Brief wait before retrying
+    #             except Exception as e:
+    #                 throw_error(e, location='main loop')
+    #                 break  # Break on other exceptions
 
-            browser.quit()
-    save_to_config(name='state', value='recurrente')
-    save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    #         browser.quit()
+    # save_to_config(name='state', value='recurrente')
+    # save_to_config(name='last_pull_date', value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     # --------------------------------------------------------
     # 0.1 Build macro table
     # --------------------------------------------------------
@@ -171,64 +171,64 @@ def main():
     # 0.5 Initialization of database
     # --------------------------------------------------------
     # Utilisation de la DatabaseInitializer
-    ADMIN_USER = 'postgres'
-    ADMIN_PASSWORD = 'postgres'
-    HOST = 'postgresql'
-    PORT = '5432'
-    DB_USER = 'conite'
-    DB_PASSWORD = 'conite_password'
-    DB_NAME = 'bank_reviews'
-    DECISIONALDB = 'decisional_db'
+    # ADMIN_USER = 'postgres'
+    # ADMIN_PASSWORD = 'postgres'
+    # HOST = 'postgresql'
+    # PORT = '5432'
+    # DB_USER = 'conite'
+    # DB_PASSWORD = 'conite_password'
+    # DB_NAME = 'bank_reviews'
+    # DECISIONALDB = 'decisional_db'
 
-    # --------------------------------------------------------------------------
-    # Database Initialization
-    # --------------------------------------------------------------------------
-    db_initializer = DatabaseInitializer(ADMIN_USER, ADMIN_PASSWORD, HOST, PORT)
+    # # --------------------------------------------------------------------------
+    # # Database Initialization
+    # # --------------------------------------------------------------------------
+    # db_initializer = DatabaseInitializer(ADMIN_USER, ADMIN_PASSWORD, HOST, PORT)
 
-    db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DB_NAME)
-    db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DECISIONALDB)
+    # db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DB_NAME)
+    # db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DECISIONALDB)
 
     
-    # ------------------------------------------------------------------------------
-    # Configuration de la base de donnees
-    # ------------------------------------------------------------------------------
-    DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
+    # # ------------------------------------------------------------------------------
+    # # Configuration de la base de donnees
+    # # ------------------------------------------------------------------------------
+    # DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
 
-    engine = create_engine(DB_URI)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    wait_for_postgresql(host=HOST, port=PORT, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME)
-    Base.metadata.create_all(engine)
+    # engine = create_engine(DB_URI)
+    # Session = sessionmaker(bind=engine)
+    # session = Session()
+    # wait_for_postgresql(host=HOST, port=PORT, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME)
+    # Base.metadata.create_all(engine)
 
-    conn_params = {
-        'dbname': DB_NAME,
-        'user': DB_USER,
-        'password': DB_PASSWORD,
-        'host': HOST,
-        'port': PORT
-    }
-    with psycopg2.connect(**conn_params) as conn:
-        with conn.cursor() as cur:
-            query = """
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public'
-            """
-            cur.execute(query)
-            existing_tables = cur.fetchall()
-            existing_tables = [table[0] for table in existing_tables]
-            print("\033[1;92mTABLES CREATED SUCCESSFULLY.\033[0m \033[1;94m" + str(existing_tables) + "\033[0m")
+    # conn_params = {
+    #     'dbname': DB_NAME,
+    #     'user': DB_USER,
+    #     'password': DB_PASSWORD,
+    #     'host': HOST,
+    #     'port': PORT
+    # }
+    # with psycopg2.connect(**conn_params) as conn:
+    #     with conn.cursor() as cur:
+    #         query = """
+    #         SELECT table_name 
+    #         FROM information_schema.tables 
+    #         WHERE table_schema = 'public'
+    #         """
+    #         cur.execute(query)
+    #         existing_tables = cur.fetchall()
+    #         existing_tables = [table[0] for table in existing_tables]
+    #         print("\033[1;92mTABLES CREATED SUCCESSFULLY.\033[0m \033[1;94m" + str(existing_tables) + "\033[0m")
 
-    # --------------------------------------------------------
-    # 0.6 Insertion of data in database
-    # --------------------------------------------------------
-    try:
-        insert_data_from_dataframe(df, session)
-        migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
-        session.commit()
-    except IntegrityError as e:
-        print("Erreur d'intégrité : ", e)
-    session.rollback()
+    # # --------------------------------------------------------
+    # # 0.6 Insertion of data in database
+    # # --------------------------------------------------------
+    # try:
+    #     insert_data_from_dataframe(df, session)
+    #     migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
+    #     session.commit()
+    # except IntegrityError as e:
+    #     print("Erreur d'intégrité : ", e)
+    # session.rollback()
 
     
 if __name__ == "__main__":
