@@ -7,6 +7,7 @@ WORKDIR /app
 ENV ADMIN_USER=postgres
 ENV ADMIN_PASSWORD=postgres
 ENV HOST=postgres_db
+# ENV HOST=postgresql
 ENV PORT=5432
 ENV DB_USER=conite
 ENV DB_PASSWORD=conite_password

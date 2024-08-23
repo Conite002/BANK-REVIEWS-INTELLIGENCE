@@ -37,7 +37,8 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, Date, Forei
 
 # ----------------------------------------------------------
 
-CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
+# CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
+CURRENT_DATE = '2024-08-11'
 DATA_PATH = os.path.join(project_root, 'data')
 CITIES_PATH = os.path.join(project_root, 'data', 'utils', 'countries_cities-full.json')
 RAW_SAVE_PATH = os.path.join(project_root, 'data', 'temp')
@@ -83,25 +84,25 @@ def main():
     # 0.1 Build macro table
     # --------------------------------------------------------
     
-    concatenate_parquets = build_macro_table(DATA_PATH)
+    #concatenate_parquets = build_macro_table(DATA_PATH)
 
     # --------------------------------------------------------
     # 0.3 Preprocessing of concatenate parquets
     # --------------------------------------------------------
-    df = preprocess_dataframe(concatenate_parquets)
+    #bank_reviews = preprocess_dataframe(concatenate_parquets)
 
     output_file = os.path.join(PROCESSED_DATA_PATH, 'macro_llamma.csv')
 
     # Vérifier si le fichier existe et le lire, sinon créer un DataFrame vide
     if os.path.exists(output_file):
-        df = pd.read_csv(output_file)
+        bank_reviews = pd.read_csv(output_file)
     else:
         print(f"File doesn't existe")
     
     # --------------------------------------------------------
     # 0.4 Remove some columns
     # --------------------------------------------------------
-    # df = df.fillna({
+    # bank_reviews = bank_reviews.fillna({
     #     'Country': 'Unknown',
     #     'Town': 'Unknown',
     #     'Bank_Name': 'Unknown',
@@ -125,32 +126,32 @@ def main():
     # --------------------------------------------------------
     # 0.4 Remove some columns
     # --------------------------------------------------------
-    # df = remove_some_cols(['date','country','city'], df)
+    # bank_reviews = remove_some_cols(['date','country','city'], bank_reviews)
     # Remplace les valeurs NaN par None
-    # df = df.applymap(lambda x: None if pd.isna(x) else x)
+    # bank_reviews = bank_reviews.applymap(lambda x: None if pd.isna(x) else x)
 
 
     # # Replace NaT values with a default date
     # default_date = pd.Timestamp('1970-01-01')
-    # df['Reviewer_Publish_Date'] = df['Reviewer_Publish_Date'].fillna(default_date)
-    # df['Reviewer_Owner_Reply_Date'] = df['Reviewer_Owner_Reply_Date'].fillna(default_date)
+    # bank_reviews['Reviewer_Publish_Date'] = bank_reviews['Reviewer_Publish_Date'].fillna(default_date)
+    # bank_reviews['Reviewer_Owner_Reply_Date'] = bank_reviews['Reviewer_Owner_Reply_Date'].fillna(default_date)
 
     # # Ensure conversion to datetime
-    # df['Reviewer_Publish_Date'] = pd.to_datetime(df['Reviewer_Publish_Date'], errors='coerce').fillna(default_date)
-    # df['Reviewer_Owner_Reply_Date'] = pd.to_datetime(df['Reviewer_Owner_Reply_Date'], errors='coerce').fillna(default_date)
+    # bank_reviews['Reviewer_Publish_Date'] = pd.to_datetime(bank_reviews['Reviewer_Publish_Date'], errors='coerce').fillna(default_date)
+    # bank_reviews['Reviewer_Owner_Reply_Date'] = pd.to_datetime(bank_reviews['Reviewer_Owner_Reply_Date'], errors='coerce').fillna(default_date)
 
-    # print(df.head())
-    # print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
-    # print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
+    # print(bank_reviews.head())
+    # print(f"Invalid publish dates: {bank_reviews['Reviewer_Publish_Date'].isna().sum()}")
+    # print(f"Invalid owner reply dates: {bank_reviews['Reviewer_Owner_Reply_Date'].isna().sum()}")
 
     
     # # Replace NaN values with appropriate defaults
-    # df['Reviewer_Star'] = df['Reviewer_Star'].fillna(0)
-    # df['Reviewer_Like_Reaction'] = df['Reviewer_Like_Reaction'].fillna(0)
-    # df['Reviewer_Name'] = df['Reviewer_Name'].fillna('Anonymous')
-    # df['Reviewer_Text'] = df['Reviewer_Text'].fillna('')
-    # df['Reviewer_Profile_Link'] = df['Reviewer_Profile_Link'].fillna('')
-    # df['Reviewer_Owner_Reply'] = df['Reviewer_Owner_Reply'].fillna('')
+    # bank_reviews['Reviewer_Star'] = bank_reviews['Reviewer_Star'].fillna(0)
+    # bank_reviews['Reviewer_Like_Reaction'] = bank_reviews['Reviewer_Like_Reaction'].fillna(0)
+    # bank_reviews['Reviewer_Name'] = bank_reviews['Reviewer_Name'].fillna('Anonymous')
+    # bank_reviews['Reviewer_Text'] = bank_reviews['Reviewer_Text'].fillna('')
+    # bank_reviews['Reviewer_Profile_Link'] = bank_reviews['Reviewer_Profile_Link'].fillna('')
+    # bank_reviews['Reviewer_Owner_Reply'] = bank_reviews['Reviewer_Owner_Reply'].fillna('')
 
 
 
@@ -159,10 +160,10 @@ def main():
     # 0.4 Topification
     # --------------------------------------------------------
     # TEMP_REVIEWS_PATH = os.path.join(project_root, 'data', 'processed', 'topics', 'bank_reviews.csv')
-    # df_topics = pd.read_csv(TEMP_REVIEWS_PATH)
-    # # completer le dataframe df existant  avec les autres colonnes du df_topics tout en comparant la colonne Reviewer_Text 
-    # if 'Reviewer_Text' in df.columns and 'Reviewer_Text' in df_topics:
-    #     df = df.merge(df_topics, on='Reviewer_Text', how='right')
+    # bank_reviews_topics = pd.read_csv(TEMP_REVIEWS_PATH)
+    # # completer le dataframe bank_reviews existant  avec les autres colonnes du bank_reviews_topics tout en comparant la colonne Reviewer_Text 
+    # if 'Reviewer_Text' in bank_reviews.columns and 'Reviewer_Text' in bank_reviews_topics:
+    #     bank_reviews = bank_reviews.merge(bank_reviews_topics, on='Reviewer_Text', how='right')
     # else:
     #     print("Reviewer_Text not found in the dataframes")
 
@@ -171,64 +172,68 @@ def main():
     # 0.5 Initialization of database
     # --------------------------------------------------------
     # Utilisation de la DatabaseInitializer
-    # ADMIN_USER = 'postgres'
-    # ADMIN_PASSWORD = 'postgres'
-    # HOST = 'postgresql'
-    # PORT = '5432'
-    # DB_USER = 'conite'
-    # DB_PASSWORD = 'conite_password'
-    # DB_NAME = 'bank_reviews'
-    # DECISIONALDB = 'decisional_db'
+    ADMIN_USER = 'postgres'
+    ADMIN_PASSWORD = 'postgres'
+    HOST = 'postgres_db'
+    PORT = '5432'
+    DB_USER = 'conite'
+    DB_PASSWORD = 'conite_password'
+    DB_NAME = 'bank_reviews'
+    DECISIONALDB = 'decisional_db'
 
-    # # --------------------------------------------------------------------------
-    # # Database Initialization
-    # # --------------------------------------------------------------------------
-    # db_initializer = DatabaseInitializer(ADMIN_USER, ADMIN_PASSWORD, HOST, PORT)
+    # --------------------------------------------------------------------------
+    # Database Initialization
+    # --------------------------------------------------------------------------
+    db_initializer = DatabaseInitializer(ADMIN_USER, ADMIN_PASSWORD, HOST, PORT)
 
-    # db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DB_NAME)
-    # db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DECISIONALDB)
+    db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DB_NAME)
+    db_initializer.create_database_and_user(DB_USER, DB_PASSWORD, DECISIONALDB)
 
     
-    # # ------------------------------------------------------------------------------
-    # # Configuration de la base de donnees
-    # # ------------------------------------------------------------------------------
-    # DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
+    # ------------------------------------------------------------------------------
+    # Configuration de la base de donnees
+    # ------------------------------------------------------------------------------
+    DB_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{HOST}:5432/{DB_NAME}'
 
-    # engine = create_engine(DB_URI)
-    # Session = sessionmaker(bind=engine)
-    # session = Session()
-    # wait_for_postgresql(host=HOST, port=PORT, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME)
-    # Base.metadata.create_all(engine)
+    engine = create_engine(DB_URI)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    wait_for_postgresql(host=HOST, port=PORT, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME)
+    Base.metadata.create_all(engine)
 
-    # conn_params = {
-    #     'dbname': DB_NAME,
-    #     'user': DB_USER,
-    #     'password': DB_PASSWORD,
-    #     'host': HOST,
-    #     'port': PORT
-    # }
-    # with psycopg2.connect(**conn_params) as conn:
-    #     with conn.cursor() as cur:
-    #         query = """
-    #         SELECT table_name 
-    #         FROM information_schema.tables 
-    #         WHERE table_schema = 'public'
-    #         """
-    #         cur.execute(query)
-    #         existing_tables = cur.fetchall()
-    #         existing_tables = [table[0] for table in existing_tables]
-    #         print("\033[1;92mTABLES CREATED SUCCESSFULLY.\033[0m \033[1;94m" + str(existing_tables) + "\033[0m")
+    conn_params = {
+        'dbname': DB_NAME,
+        'user': DB_USER,
+        'password': DB_PASSWORD,
+        'host': HOST,
+        'port': PORT
+    }
+    with psycopg2.connect(**conn_params) as conn:
+        with conn.cursor() as cur:
+            query = """
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+            """
+            cur.execute(query)
+            existing_tables = cur.fetchall()
+            existing_tables = [table[0] for table in existing_tables]
+            print("\033[1;92mTABLES CREATED SUCCESSFULLY.\033[0m \033[1;94m" + str(existing_tables) + "\033[0m")
 
-    # # --------------------------------------------------------
-    # # 0.6 Insertion of data in database
-    # # --------------------------------------------------------
-    # try:
-    #     insert_data_from_dataframe(df, session)
-    #     migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
-    #     session.commit()
-    # except IntegrityError as e:
-    #     print("Erreur d'intégrité : ", e)
-    # session.rollback()
+    # --------------------------------------------------------
+    # 0.6 Insertion of data in database
+    # --------------------------------------------------------
+    try:
+
+        bank_reviews.duplicated(subset=['Reviewer_Name', 'Reviewer_Star', 'Reviewer_Text', 'Reviewer_Publish_Date']).sum()
+        bank_reviews.drop_duplicates(subset=['Reviewer_Name', 'Reviewer_Star', 'Reviewer_Text', 'Reviewer_Publish_Date'], inplace=True)
+        
+        insert_data_from_dataframe(bank_reviews, session)
+        migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
+        session.commit()
+    except IntegrityError as e:
+        print("Erreur d'intégrité : ", e)
+    session.rollback()
 
     
 if __name__ == "__main__":
