@@ -11,10 +11,8 @@ log() {
 
 log "Démarrage de la vérification de connexion PostgreSQL"
 
-# Attendre que PostgreSQL soit prêt
-until pg_isready -h localhost -p 5432 -U postgres; do
-  log "PostgreSQL is unavailable - sleeping "
-  # print db_port and host
+until pg_isready -h postgres_db -p 5432 -U postgres; do
+  echo "PostgreSQL is unavailable - sleeping"
   sleep 2
 done
 

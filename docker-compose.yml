@@ -21,7 +21,7 @@ services:
       timeout: 30s
       retries: 3
     networks:
-      - mynetwork
+      - default
 
   app:
     build: .
@@ -30,11 +30,13 @@ services:
       - DB_PASSWORD=postgres
       - DB_NAME=bank_reviews
       - DB_PORT=5432
-      - DB_HOST=postgres_db 
+      - DB_HOST=postgresql
       - FLASK_APP=superset
     depends_on:
       postgresql:
         condition: service_healthy
+    networks:
+      - default
       # ollama: 
       #   condition: service_healthy
     volumes:
@@ -64,7 +66,8 @@ services:
   #     timeout: 30s
   #     retries: 3
 networks:
-  mynetwork:
+  default:
+    driver: bridge
   
 volumes:
   postgres_data:

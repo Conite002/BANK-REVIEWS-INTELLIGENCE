@@ -168,3 +168,4 @@ chmod +x install_and_launch_superset.sh
 docker compose build
 docker compose up
 
+<!-- SQLALCHEMY_DATABASE_URI = "postgresql://conite:conite_password@localhost:5432/bank_reviews" -->

@@ -13,9 +13,9 @@ export ADMIN_LASTNAME=admin
 export ADMIN_EMAIL=admin@example.com
 export ADMIN_PASSWORD=admin
 
-# Generate dynamic secrets using tr
-export SECRET_KEY="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 42)"
-export SUPERSET_SECRET_KEY="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 42)"
+# Generate dynamic secrets using openssl
+export SECRET_KEY="$(openssl rand -base64 42)"
+export SUPERSET_SECRET_KEY="$(openssl rand -base64 42)"
 export FLASK_APP=superset
 
 # Print environment variables for debugging
@@ -73,3 +73,5 @@ log "Starting Superset server on port $SUPSET_PORT"
 superset run -p "$SUPSET_PORT" --with-threads --reload --debugger
 
 log "Run this to see address of postgres container : docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres_db"
+
+

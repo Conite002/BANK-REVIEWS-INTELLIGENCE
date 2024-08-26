@@ -34,6 +34,23 @@ from src.database_management.migrate_to_decisionalDB import migration_to_decisio
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, Column, Integer, String, Text, Date, ForeignKey, insert
+import os
+# from dotenv import load_dotenv
+
+
+# Charger les variables d'environnement à partir du fichier .env
+# load_dotenv()
+
+
+
+    # ADMIN_USER = 'postgres'
+    # ADMIN_PASSWORD = 'postgres'
+    # HOST = 'postgres_db'
+    # PORT = '5432'
+    # DB_USER = 'conite'
+    # DB_PASSWORD = 'conite_password'
+    # DB_NAME = 'bank_reviews'
+    # DECISIONALDB = 'decisional_db'
 
 # ----------------------------------------------------------
 
@@ -229,7 +246,7 @@ def main():
         bank_reviews.drop_duplicates(subset=['Reviewer_Name', 'Reviewer_Star', 'Reviewer_Text', 'Reviewer_Publish_Date'], inplace=True)
         
         insert_data_from_dataframe(bank_reviews, session)
-        migration_to_decisionalDB(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD, trans_engine=engine, HOST=HOST)
+        migration_to_decisionalDB(DB_USER=DB_USER,DB_HOST=HOST, DB_PASSWORD=DB_PASSWORD, trans_engine=engine)
         session.commit()
     except IntegrityError as e:
         print("Erreur d'intégrité : ", e)
