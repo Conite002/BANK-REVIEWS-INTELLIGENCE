@@ -1,0 +1,63 @@
+2024-08-31T16:15:41.278390+0100 INFO Fetching content from URL: https://www.bceao.int/fr/content/paysage-bancaire
+2024-08-31T16:15:41.842968+0100 INFO Locating the <ul> containing country names.
+2024-08-31T16:15:41.842968+0100 INFO Extracting country names and corresponding bank information.
+2024-08-31T16:15:41.842968+0100 INFO Processing country: Bénin
+2024-08-31T16:15:41.856049+0100 INFO Found 17 banks for Bénin.
+2024-08-31T16:15:41.857049+0100 INFO Processing country: Burkina
+2024-08-31T16:15:41.861089+0100 INFO Found 20 banks for Burkina.
+2024-08-31T16:15:41.862948+0100 INFO Processing country: Côte d’Ivoire
+2024-08-31T16:15:41.868435+0100 INFO Found 33 banks for Côte d’Ivoire.
+2024-08-31T16:15:41.871516+0100 INFO Processing country: Guinée Bissau
+2024-08-31T16:15:41.876435+0100 INFO Found 6 banks for Guinée Bissau.
+2024-08-31T16:15:41.878582+0100 INFO Processing country: Mali
+2024-08-31T16:15:41.879728+0100 INFO Found 17 banks for Mali.
+2024-08-31T16:15:41.879728+0100 INFO Processing country: Niger
+2024-08-31T16:15:41.879728+0100 INFO Found 20 banks for Niger.
+2024-08-31T16:15:41.879728+0100 INFO Processing country: Sénégal
+2024-08-31T16:15:41.895460+0100 INFO Found 33 banks for Sénégal.
+2024-08-31T16:15:41.895460+0100 INFO Processing country: Togo
+2024-08-31T16:15:41.895460+0100 INFO Found 17 banks for Togo.
+2024-08-31T16:15:41.895460+0100 INFO Saving the data to data/utils\country_banks.json.
+2024-08-31T16:15:41.895460+0100 INFO Country and bank data successfully saved.
+2024-08-31T16:16:47.734241+0100 INFO Fetching content from URL: https://www.bceao.int/fr/content/paysage-bancaire
+2024-08-31T16:16:47.734241+0100 INFO Fetching content from URL: https://www.bceao.int/fr/content/paysage-bancaire
+2024-08-31T16:16:48.118578+0100 INFO Locating the <ul> containing country names.
+2024-08-31T16:16:48.118578+0100 INFO Locating the <ul> containing country names.
+2024-08-31T16:16:48.120602+0100 INFO Extracting country names and corresponding bank information.
+2024-08-31T16:16:48.120602+0100 INFO Extracting country names and corresponding bank information.
+2024-08-31T16:16:48.121603+0100 INFO Processing country: Bénin
+2024-08-31T16:16:48.121603+0100 INFO Processing country: Bénin
+2024-08-31T16:16:48.124602+0100 INFO Found 17 banks for Bénin.
+2024-08-31T16:16:48.124602+0100 INFO Found 17 banks for Bénin.
+2024-08-31T16:16:48.125604+0100 INFO Processing country: Burkina
+2024-08-31T16:16:48.125604+0100 INFO Processing country: Burkina
+2024-08-31T16:16:48.128713+0100 INFO Found 20 banks for Burkina.
+2024-08-31T16:16:48.128713+0100 INFO Found 20 banks for Burkina.
+2024-08-31T16:16:48.128713+0100 INFO Processing country: Côte d’Ivoire
+2024-08-31T16:16:48.128713+0100 INFO Processing country: Côte d’Ivoire
+2024-08-31T16:16:48.132601+0100 INFO Found 33 banks for Côte d’Ivoire.
+2024-08-31T16:16:48.132601+0100 INFO Found 33 banks for Côte d’Ivoire.
+2024-08-31T16:16:48.133696+0100 INFO Processing country: Guinée Bissau
+2024-08-31T16:16:48.133696+0100 INFO Processing country: Guinée Bissau
+2024-08-31T16:16:48.137438+0100 INFO Found 6 banks for Guinée Bissau.
+2024-08-31T16:16:48.137438+0100 INFO Found 6 banks for Guinée Bissau.
+2024-08-31T16:16:48.139444+0100 INFO Processing country: Mali
+2024-08-31T16:16:48.139444+0100 INFO Processing country: Mali
+2024-08-31T16:16:48.142556+0100 INFO Found 17 banks for Mali.
+2024-08-31T16:16:48.142556+0100 INFO Found 17 banks for Mali.
+2024-08-31T16:16:48.143637+0100 INFO Processing country: Niger
+2024-08-31T16:16:48.143637+0100 INFO Processing country: Niger
+2024-08-31T16:16:48.146150+0100 INFO Found 20 banks for Niger.
+2024-08-31T16:16:48.146150+0100 INFO Found 20 banks for Niger.
+2024-08-31T16:16:48.147151+0100 INFO Processing country: Sénégal
+2024-08-31T16:16:48.147151+0100 INFO Processing country: Sénégal
+2024-08-31T16:16:48.151257+0100 INFO Found 33 banks for Sénégal.
+2024-08-31T16:16:48.151257+0100 INFO Found 33 banks for Sénégal.
+2024-08-31T16:16:48.152156+0100 INFO Processing country: Togo
+2024-08-31T16:16:48.152156+0100 INFO Processing country: Togo
+2024-08-31T16:16:48.155148+0100 INFO Found 17 banks for Togo.
+2024-08-31T16:16:48.155148+0100 INFO Found 17 banks for Togo.
+2024-08-31T16:16:48.157154+0100 INFO Saving the data to ../data/utils\country_banks.json.
+2024-08-31T16:16:48.157154+0100 INFO Saving the data to ../data/utils\country_banks.json.
+2024-08-31T16:16:48.157375+0100 INFO Country and bank data successfully saved.
+2024-08-31T16:16:48.157375+0100 INFO Country and bank data successfully saved.
