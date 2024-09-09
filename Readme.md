@@ -169,3 +169,41 @@ docker compose build
 docker compose up
 
 <!-- SQLALCHEMY_DATABASE_URI = "postgresql://conite:conite_password@localhost:5432/bank_reviews" -->
+----------------------------------------------------------------------------------------------------
+# Date Table
+`Filtering and Slicing by Date`: A Date Table lets you easily filter and slice your data by year, month, day, quarter, or other time periods.
+
+`Correct Sorting of Dates`: Without a Date Table, Power BI might not handle dates correctly for sorting, especially if you want to group data by months or quarters.
+
+`Date Granularity`: To display data at various levels of time granularity (like daily, monthly, or yearly trends), you need a Date Table with columns such as Year, Month, Day, Week, and Quarter.
+
+# KPI
+* 1. Total Number of Reviews
+
+    TotalReviews = COUNTROWS('macro_llamma_v3')
+
+* 2. Average Star Rating
+
+    AverageRating = AVERAGE('macro_llamma_v3'[Reviewer_Star])
+
+* 3. Positive/Negative Review Count
+
+    PositiveReviews = CALCULATE(COUNTROWS('macro_llamma_v3'), 'macro_llamma_v3'[Sentiment] = "positive")
+    NegativeReviews = CALCULATE(COUNTROWS('macro_llamma_v3'), 'macro_llamma_v3'[Sentiment] = "negative")
+
+* 4. Owner Response Rate
+
+    OwnerResponseRate = DIVIDE(COUNTROWS(FILTER('macro_llamma_v3', 'macro_llamma_v3'[Reviewer_Owner_Reply] <> "Nothing")), [TotalReviews])
+
+* 5. Percentage of Reviews by Sentiment
+
+    PercentagePositive = DIVIDE([PositiveReviews], [TotalReviews], 0) * 100
+    PercentageNegative = DIVIDE([NegativeReviews], [TotalReviews], 0) * 100
+
+* 6. Total Reviews by Topic
+
+    <!-- TotalReviewsByTopic = CALCULATE(COUNTROWS('ReviewData'), 'ReviewData'[Topic] = "YourTopicName") -->
+
+* 7. Average Reviews per Bank
+
+    AverageReviewsPerBank = AVERAGEX(VALUES('ReviewData'[Bank_Name]), [TotalReviews])
