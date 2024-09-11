@@ -237,3 +237,12 @@ DIVIDE(
 
 
 
+# SCREENSHORTS
+**HOME**
+![alt text](./screenshorts/home.png)
+
+**OVERVIEW BANK**
+![alt text](./screenshorts/overview_bank.png)
+
+**UNHAPPY CUSTOMER**
+![alt text](./screenshorts/unhappy_customer.png)
