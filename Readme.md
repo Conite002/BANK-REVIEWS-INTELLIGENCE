@@ -207,3 +207,33 @@ docker compose up
 * 7. Average Reviews per Bank
 
     AverageReviewsPerBank = AVERAGEX(VALUES('ReviewData'[Bank_Name]), [TotalReviews])
+
+
+* 8. PercentageNegativePerTown = 
+DIVIDE(
+    CALCULATE(
+        COUNTROWS('ReviewData'),
+        'ReviewData'[Sentiment] = "negative"
+    ),
+    CALCULATE(
+        COUNTROWS('ReviewData'),
+        'ReviewData'[Sentiment] = "negative",
+        REMOVEFILTERS('ReviewData'[Town]) -- Ignore le filtre par ville pour obtenir le total global
+    ),
+    0
+)*100
+
+* 9. PositiveRatio
+
+    PositiveRatio = DIVIDE([PositiveReviews], [TotalReviews], 0)
+
+* 10. Negative Ratio
+
+    NegativeRatio = DIVIDE([NegativeReviews], [TotalReviews], 0)
+
+* 11. Classement des banques
+
+    BankScore = [PositiveRatio] - [NegativeRatio]
+
+
+
