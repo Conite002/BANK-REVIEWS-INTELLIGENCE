@@ -84,65 +84,6 @@ def primary_search(browser):
     return a, action
 
 
-# def extract_review(browser, action, verbose=False):
-#     try:
-#         tab_action = browser.find_elements(By.CLASS_NAME, 'hh2c6')
-#         if not tab_action or len(tab_action) < 2:
-#             return []
-#         advice_btn = tab_action[1]
-#         action.move_to_element(advice_btn).click().perform()
-#         time.sleep(2)
-#     except Exception as e:
-#         logger.error(f"An error occurred: {e}")
-
-#     reviews_blocs = browser.find_elements(By.CLASS_NAME, "jJc9Ad")
-#     last_reviews_count = len(reviews_blocs)
-#     if verbose:
-#         logger.info(f"Number of reviews found: {last_reviews_count}")
-#     _same = 0
-#     while True:
-#         scroll_origin = ScrollOrigin.from_element(reviews_blocs[-1])
-#         action.scroll_from_origin(scroll_origin, 0, 1000).perform()
-#         time.sleep(2)
-#         reviews_blocs = browser.find_elements(By.CLASS_NAME, "jJc9Ad")
-
-#         if len(reviews_blocs) == last_reviews_count:
-#             _same += 1
-#             if _same > 3:
-#                 break
-#         else:
-#             last_reviews_count = len(reviews_blocs)
-#             _same = 0
-
-#     reviews = []
-#     for bloc in reviews_blocs:
-#         html_content = bloc.get_attribute('outerHTML')
-#         html_content = BeautifulSoup(html_content, 'html.parser')
-
-#         try:
-#             reviewer_name = html_content.find('div', {"class": "d4r55"}).text
-#             reviewer_star = len(html_content.findAll('span', {"class": "hCCjke google-symbols NhBTye elGi1d"}))
-#             reviewer_text = html_content.find('span', {"class": "wiI7pd"}).text if html_content.find('span', {"class": "wiI7pd"}) else "NAN"
-#             reviewer_publish_data = html_content.find('span', {"class": "rsqaWe"}).text
-#             reviewer_like_reaction = html_content.find('span', {"class": "pkWtMe"}).text if html_content.find('span', {"class": "pkWtMe"}) else 0
-#             reviewer_profil_link = html_content.find('button', {"class": "WEBjve"}).attrs.get('data-href')
-
-#             soup = html_content.findAll('div', {"class": "wiI7pd"})
-#             if soup:
-#                 chat = [msg.text for msg in soup]
-#                 reviewer_owner_reply = "**".join(chat)
-#             else:
-#                 reviewer_owner_reply = "NAN"
-
-#             soup = html_content.find('span', {"class": "DZSIDd"})
-#             reviewer_owner_reply_date = soup.text if soup else "NAN"
-
-#             reviews.append((reviewer_name, reviewer_star, reviewer_text, reviewer_publish_data, reviewer_like_reaction, reviewer_profil_link, reviewer_owner_reply, reviewer_owner_reply_date))
-#         except Exception as e:
-#             logger.error(f"An error occurred in extract_review: {e}")
-#             continue
-#     return reviews
-
 def extract_review(browser, action, verbose=False):
     try:
         tab_action = browser.find_elements(By.CLASS_NAME, 'hh2c6')
