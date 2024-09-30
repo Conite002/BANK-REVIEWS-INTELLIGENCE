@@ -6,12 +6,10 @@ from datetime import datetime
 
 
 
-# Function to load cities
 def load_cities(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
 
-# Function to handle errors
 def throw_error(e, location):
     print(f"Error from {location}: {e}")
 
@@ -52,7 +50,7 @@ def load_from_config(config_path='config.json', name='state'):
             value = config.get(name)
             if isinstance(value, str) and name != 'state':
                 try:
-                    value = datetime.fromisoformat(value)  # Convert back to datetime if possible
+                    value = datetime.fromisoformat(value)
                 except ValueError:
                     logger.error(f"Invalid datetime string for {name}: {value}")
             return value
@@ -79,7 +77,7 @@ def save_to_config(name, value):
         
         config[name] = value
         
-        with open(config_path, 'w') as file:  # Use config_path, not config.json
+        with open(config_path, 'w') as file:
             json.dump(config, file, indent=4)
     
     except json.JSONDecodeError as e:

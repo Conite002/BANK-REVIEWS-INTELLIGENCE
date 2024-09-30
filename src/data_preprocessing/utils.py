@@ -3,59 +3,9 @@ import re
 
 # UTILS
 # -------------------------------------------------------------------
-from datetime import datetime, timedelta
-import re
 
-# def parse_relative_date(relative_date_str):
-#     # Define a mapping of French time units to their corresponding timedelta functions
-#     units = {
-#         'ans': 'years',
-#         'an': 'years',
-#         'mois': 'months',
-#         'semaines': 'weeks',
-#         'semaine': 'weeks',
-#         'jours': 'days',
-#         'jour': 'days',
-#         'heures': 'hours',
-#         'heure': 'hours',
-#         'minutes': 'minutes',
-#         'minute': 'minutes'
-#     }
-
-#     match = re.search(r"il y a (\d+) (\w+)", relative_date_str)
-#     if not match:
-#         return None
-
-#     quantity = int(match.group(1))
-#     unit = match.group(2)
-
-#     if unit not in units:
-#         return None
-
-#     now = datetime.now()
-
-#     if units[unit] == 'years':
-#         return now - timedelta(days=quantity * 365)
-#     elif units[unit] == 'months':
-#         # Approximation: 30 days per month
-#         return now - timedelta(days=quantity * 30)
-#     elif units[unit] == 'weeks':
-#         return now - timedelta(weeks=quantity)
-#     elif units[unit] == 'days':
-#         return now - timedelta(days=quantity)
-#     elif units[unit] == 'hours':
-#         return now - timedelta(hours=quantity)
-#     elif units[unit] == 'minutes':
-#         return now - timedelta(minutes=quantity)
-#     else:
-#         return None
-
-
-from datetime import datetime, timedelta
-import re
 
 def parse_relative_date(relative_date_str):
-    # Replace HTML entities with regular spaces
     relative_date_str = relative_date_str.replace('&nbsp;', ' ')
     
     # Remove extra words like "un" and handle possible variations
@@ -73,7 +23,6 @@ def parse_relative_date(relative_date_str):
     # Default quantity to 1 if not specified
     quantity = int(quantity_str) if quantity_str else 1
     
-    # Dictionary to map French time units to timedelta components
     unit_mapping = {
         'ans': 'years',
         'an': 'years',

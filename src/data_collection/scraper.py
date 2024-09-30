@@ -39,13 +39,11 @@ def save_data_to_parquet(country, city, data):
     
     df = pd.DataFrame(data)
     
-    # Sauvegarder le DataFrame en fichier Parquet
     output_file = os.path.join(output_dir, f"{city}.parquet")
     df.to_parquet(output_file, index=False)
     print(f"Data saved to {output_file}")
 
 
-# Function to perform primary search
 def primary_search(browser):
     a = WebDriverWait(browser, 10).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.hfpxzc'))
@@ -74,7 +72,7 @@ def primary_search(browser):
                 last_len = len(a)
                 same_len_count = 0
             scroll_attempts += 1
-            if scroll_attempts > 50:  # Maximum scroll attempts to avoid infinite loop
+            if scroll_attempts > 50:
                 break
         except StaleElementReferenceException:
             logger.warning("Scroll down to the last element")

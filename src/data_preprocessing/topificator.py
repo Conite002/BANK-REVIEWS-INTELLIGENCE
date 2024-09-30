@@ -141,7 +141,6 @@ class TopicExtractor:
             }
             Si le review est NAN, Sortie: {'topics': []}. Pour le review donne la sortie conrespondant a son analyse """
 
-        #Utilise seulement ces topics . Pas d'autres. """ + str(self.topics)
 
     def _send_request(self, prompt):
         data = {
@@ -152,13 +151,11 @@ class TopicExtractor:
         response = requests.post(self.url, json=data, headers=self.headers)
         if response.status_code == 200:
             response_data = response.json()
-            #print(response_data['response'])
             return response_data.get('response', 'No response field found')
         else:
             raise Exception(f"Failed to retrieve data, status code {response.status_code}")
     
     def extract(self, reviews, stars, type='SINGLE_SOURCE'):
-        #print("REVIEW: ", reviews)
         if reviews == "NAN":
             return {'topics': []}
         else:

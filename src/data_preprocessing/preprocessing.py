@@ -59,16 +59,11 @@ def preprocess_dataframe(df):
     if 'Reviewer_Text' in df.columns and 'Reviewer_Star' in df.columns:
         df = df.apply(handle_nan_reviewer_text, axis=1)
 
-    # Filling NaN values
     default_date = pd.Timestamp('1970-01-01')
     df = df.fillna({
         'Reviewer_Publish_Date': default_date,
         'Reviewer_Owner_Reply_Date': default_date
     }).infer_objects(copy=False)
-
-    # Using map instead of applymap
-    # df = df.applymap(lambda x: None if pd.isna(x) else x)
-
 
     # --------------------------------------------------------
     # 0.4 Remove some columns
@@ -92,21 +87,6 @@ def preprocess_dataframe(df):
     # --------------------------------------------------------
     df['Reviewer_Publish_Date'] = pd.to_datetime(df['Reviewer_Publish_Date'], errors='coerce').fillna(default_date)
     df['Reviewer_Owner_Reply_Date'] = pd.to_datetime(df['Reviewer_Owner_Reply_Date'], errors='coerce').fillna(default_date)
-
-    # # # print(df.head())
-    # # print(f"Invalid publish dates: {df['Reviewer_Publish_Date'].isna().sum()}")
-    # # print(f"Invalid owner reply dates: {df['Reviewer_Owner_Reply_Date'].isna().sum()}")
-
-    # --------------------------------------------------------
-    # 0.7 Replace NaN values with appropriate defaults
-    # --------------------------------------------------------
-    # df['Reviewer_Profile_Link'] = df['Reviewer_Profile_Link'].fillna('')
-    # df['Reviewer_Owner_Reply'] = df['Reviewer_Owner_Reply'].fillna('')
-
-    # # After filling NaNs, make sure there are no NaNs left
-    # # print(df.isna().sum())
-    # # print(df.dtypes)
-
     # --------------------------------------------------------
     # Extract topics and sentiments
     # --------------------------------------------------------
@@ -116,10 +96,8 @@ def preprocess_dataframe(df):
     print(f"Topic : {topics}")
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Define the output directory relative to the project's root
     project_root = os.path.dirname(os.path.dirname(script_dir))
     output_directory = os.path.join(project_root, 'data', 'processed')
-    # Create the date folder
     output_directory = os.path.join(output_directory, datetime.now().strftime('%Y-%m-%d'))
 
     if not os.path.exists(output_directory):
@@ -158,5 +136,4 @@ def preprocess_dataframe(df):
             pass
     df_macro.to_csv(output_file, index=False)
     print(f"File written to {output_file}")
-    # return df
     return df_macro
